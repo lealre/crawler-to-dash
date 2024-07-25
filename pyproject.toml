@@ -7,6 +7,11 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "3.12.3"
+pandas = "^2.2.2"
+bs4 = "^0.0.2"
+requests = "^2.32.3"
+ipykernel = "^6.29.5"
+fastparquet = "^2024.5.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -29,5 +34,7 @@ preview = true
 quote-style = "single"
 
 [tool.taskipy.tasks]
+sapo = 'python src/crawlers/sapo_crawler.py'
+imovirtual = 'python src/crawlers/imovirtual_crawler.py'
 lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
