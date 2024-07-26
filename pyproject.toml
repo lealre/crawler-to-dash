@@ -12,6 +12,8 @@ bs4 = "^0.0.2"
 requests = "^2.32.3"
 ipykernel = "^6.29.5"
 fastparquet = "^2024.5.0"
+pymongo = "^4.8.0"
+pydantic-settings = "^2.3.4"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -24,6 +26,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 line-length = 79
+exclude = [
+    "src/crawl_sapo.py",
+    "src/crawl_imovirtual.py"
+]
 
 [tool.ruff.lint]
 preview = true
@@ -34,7 +40,7 @@ preview = true
 quote-style = "single"
 
 [tool.taskipy.tasks]
-sapo = 'python src/crawlers/sapo_crawler.py'
-imovirtual = 'python src/crawlers/imovirtual_crawler.py'
+sapo = 'python src/crawl_sapo.py'
+imovirtual = 'python src/crawl_imovirtual.py'
 lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
