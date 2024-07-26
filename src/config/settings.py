@@ -10,4 +10,5 @@ class Settings(BaseSettings):
     MONGO_PORT: int = 27017
     MONGO_DATABASE: str = 'scraper_db'
 
-    LOCAL_STORE: bool = True
+    LOCAL_STORAGE: bool = False
+    SAVE_TO_MONGO: bool = False

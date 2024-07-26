@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from src.settings import Settings
+from src.config.settings import Settings
 
 
 class MongoConnection:
@@ -36,11 +36,11 @@ class MongoConnection:
         self._collection = self._db[self.collection_name]
 
     def save_dataframe(self, df):
-        data = df.to_dict(orient='records')  # save to JSON
-        self._collection.insert_many(data)  # insert data
-        print("DataFrame saved in MongoDB.")
+        data = df.to_dict(orient='records')
+        self._collection.insert_many(data)
+        print('DataFrame saved in MongoDB.')
 
     def close_connection(self):
         if self._client:
             self._client.close()
-            print("Connection closed successfully.")
+            print('Connection closed successfully.')

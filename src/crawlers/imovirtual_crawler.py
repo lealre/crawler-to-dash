@@ -29,7 +29,9 @@ from http import HTTPStatus
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-from default_crawler import AbstractCrawler
+
+from src.config.settings import Settings
+from src.crawlers.default_crawler import AbstractCrawler
 
 
 class ImovirtualCrawler(AbstractCrawler):
@@ -57,7 +59,13 @@ class ImovirtualCrawler(AbstractCrawler):
             self.params['page'] = self.page
             self.url_args = item
             self.start_url_session()
-        self.export_parquet_file()
+
+        self.final_df = pd.concat(self.list_dfs, ignore_index=True, axis=0)
+
+        if Settings().SAVE_TO_MONGO:
+            self.save_data(self.final_df)
+        if Settings().LOCAL_STORAGE:
+            self.export_parquet_file(self.final_df)
 
     def start_url_session(self):
         (
@@ -174,17 +182,3 @@ class ImovirtualCrawler(AbstractCrawler):
         df = df.assign(sub_location_search=self.sub_location)
         print('Advertisements extracted:', df.shape[0])
         self.list_dfs.append(df)
-
-
-if __name__ == '__main__':
-    offer_types_search = ['comprar', 'arrendar']
-    property_types_search = ['apartamento', 'moradia']
-    location_search = ['lisboa']
-    sub_location_search = ['']
-
-    ImovirtualCrawler().crawl(
-        offer_types=offer_types_search,
-        property_types=property_types_search,
-        locations=location_search,
-        sub_locations=sub_location_search,
-    )
