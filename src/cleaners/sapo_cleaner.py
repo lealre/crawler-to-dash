@@ -10,7 +10,6 @@ class SapoCleaner(AbstractCleaner):
         super().__init__(collection='raw_sapo')
 
     def clean_data(self):
-
         self.get_collection_dataframe()
 
         self.splitting_location()
@@ -29,9 +28,8 @@ class SapoCleaner(AbstractCleaner):
         return self.df
 
     def splitting_location(self):
-        df_location_info_splitted = (
-            self.df['location']
-            .str.split(',', expand=True)
+        df_location_info_splitted = self.df['location'].str.split(
+            ',', expand=True
         )
         df_location_info_splitted.columns = [
             f'location_zone_{n}' for n in df_location_info_splitted.columns
@@ -39,11 +37,7 @@ class SapoCleaner(AbstractCleaner):
         self.df = self.df.join(df_location_info_splitted)
 
     def splitting_info_agg(self):
-        df_info_agg_splitted = (
-            self.df['info_agg']
-            .str.split('·',
-            expand=True)
-        )
+        df_info_agg_splitted = self.df['info_agg'].str.split('·', expand=True)
         df_info_agg_splitted.columns = [
             f'info_{n}' for n in df_info_agg_splitted.columns
         ]
@@ -54,7 +48,7 @@ class SapoCleaner(AbstractCleaner):
                 'info_0': 'property_status',
                 'info_1': 'area_m2',
             },
-            inplace=True
+            inplace=True,
         )
 
     def clean_property_status_and_area(self):
@@ -63,22 +57,18 @@ class SapoCleaner(AbstractCleaner):
         )
 
         self.df['property_status'] = (
-            self.df['property_status']
-            .str.strip()
-            .replace('', None)
+            self.df['property_status'].str.strip().replace('', None)
         )
 
-        self.df['area_m2'] = (
-            self.df['area_m2'].str.replace(r'\D', '', regex=True)
+        self.df['area_m2'] = self.df['area_m2'].str.replace(
+            r'\D', '', regex=True
         )
-        self.df['area_m2'] = (
-            pd.to_numeric(self.df['area_m2'], errors='coerce')
-        )
+        self.df['area_m2'] = pd.to_numeric(self.df['area_m2'], errors='coerce')
 
     def clean_num_bedrooms(self):
         pattern_num_bedrooms = r'(T\d\S*)'
-        self.df['num_bedrooms'] = (
-            self.df['type'].str.extract(pattern_num_bedrooms)
+        self.df['num_bedrooms'] = self.df['type'].str.extract(
+            pattern_num_bedrooms
         )
 
         self.df['num_bedrooms'] = self.df['num_bedrooms'].apply(
@@ -94,29 +84,26 @@ class SapoCleaner(AbstractCleaner):
             columns={
                 'type': 'title',
             },
-            inplace=True
+            inplace=True,
         )
 
-        self.df['date_extracted'] = (
-            pd.to_datetime(self.df['date_extracted']).dt.date
+        self.df['date_extracted'] = pd.to_datetime(
+            self.df['date_extracted']
+        ).dt.date
+
+        self.df['price_euro'] = self.df['price_euro'].str.replace(
+            r'\D', '', regex=True
+        )
+        self.df['price_euro'] = pd.to_numeric(
+            self.df['price_euro'], errors='coerce'
         )
 
-        self.df['price_euro'] = (
-            self.df['price_euro'].str.replace(r'\D', '', regex=True)
-        )
-        self.df['price_euro'] = (
-            pd.to_numeric(self.df['price_euro'], errors='coerce')
-        )
-
-        self.df['sub_location_search'] = (
-            self.df['sub_location_search']
-            .apply(lambda x: None if not x else x)
+        self.df['sub_location_search'] = self.df['sub_location_search'].apply(
+            lambda x: None if not x else x
         )
 
     def drop_columns_and_duplicated(self):
-        self.df = self.df.drop(
-            columns=['location', 'info_agg']
-        )
+        self.df = self.df.drop(columns=['location', 'info_agg'])
 
         self.df.drop_duplicates(inplace=True)
 
@@ -136,9 +123,7 @@ class SapoCleaner(AbstractCleaner):
     @staticmethod
     def apply_correct_area_and_property_status_values(row):
         pattern_has_number = r'\d'
-        if (
-            re.match(pattern_has_number, row['property_status'])
-        ):
+        if re.match(pattern_has_number, row['property_status']):
             row['area_m2'] = row['property_status']
             row['property_status'] = None
         return row
@@ -160,9 +145,6 @@ class SapoCleaner(AbstractCleaner):
     def apply_normalize_num_bedrooms(record):
         values_accepted = [f'T{n}' for n in range(10)]
         values_accepted.append('T9+')
-        if (
-            isinstance(record, str)
-            and record not in values_accepted
-        ):
+        if isinstance(record, str) and record not in values_accepted:
             return 'T9+'
         return record

@@ -1,16 +1,11 @@
-import sys
-import os
-# Add the root directory of your project to sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from src.crawlers.sapo_crawler import SapoCrawler
 
-
 offer_types_search = [
-    # 'comprar', 
-    'alugar']
+    # 'comprar',
+    'alugar'
+]
 property_types_search = [
-    # 'apartamentos', 
+    # 'apartamentos',
     'moradias'
 ]
 location_search = [
