@@ -35,6 +35,10 @@ class MongoConnection:
         self.collection_name = collection
         self._collection = self._db[self.collection_name]
 
+    def get_data_from_collection(self) -> list[dict]:
+        documents = self._collection.find()
+        return list(documents)
+
     def save_dataframe(self, df):
         data = df.to_dict(orient='records')
         self._collection.insert_many(data)
