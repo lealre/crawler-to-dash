@@ -1,13 +1,30 @@
+import json
 import re
 
 import pandas as pd
+import pandera as pa
 
 from src.cleaners.default_cleaner import AbstractCleaner
+from src.schemas import StageSchema
 
 
 class SapoCleaner(AbstractCleaner):
     def __init__(self) -> None:
-        super().__init__(collection='raw_sapo')
+        super().__init__(
+            collection_in='raw_sapo',
+            collection_out= 'stage_sapo'
+        )
+    
+    def clean_and_stage(self):
+        print('Starting the cleaning...')
+        self.clean_data()
+        try:
+            self.df = StageSchema.validate(self.df, lazy=True)
+            print('Dataframe validated!')
+            self.save_data(self.df)
+        except pa.errors.SchemaErrors as exc:
+            print(json.dumps(exc.message, indent=2))
+        
 
     def clean_data(self):
         self.get_collection_dataframe()
@@ -19,13 +36,11 @@ class SapoCleaner(AbstractCleaner):
         self.clean_num_bedrooms()
         self.clean_change_columns_and_data_types()
 
-        self.drop_columns_and_duplicated()
-
         self.set_unique_id()
 
-        self.reindex_dataframe()
+        self.drop_columns_and_duplicated()
 
-        return self.df
+        self.reindex_dataframe()
 
     def splitting_location(self):
         df_location_info_splitted = self.df['location'].str.split(
@@ -102,11 +117,6 @@ class SapoCleaner(AbstractCleaner):
             lambda x: None if not x else x
         )
 
-    def drop_columns_and_duplicated(self):
-        self.df = self.df.drop(columns=['location', 'info_agg'])
-
-        self.df.drop_duplicates(inplace=True)
-
     def set_unique_id(self):
         index_to_remove = self.df[
             (self.df.link.duplicated(keep='first'))
@@ -119,6 +129,17 @@ class SapoCleaner(AbstractCleaner):
         self.df['link_id'] = self.df['link'].str.extract(pattern)
         self.df['link_id'] = self.df['link_id'].astype(str)
         self.df['link_id'] = self.df['link_id'].replace('nan', None)
+    
+    def drop_columns_and_duplicated(self):
+        self.df = self.df.drop(columns=['location', 'info_agg'])
+
+        self.df.drop_duplicates(inplace=True)
+        self.df.drop_duplicates(
+            subset=['link_id'], keep = 'first', inplace = True
+        )
+        self.df.dropna(
+            subset=['link_id'], axis= 'index', inplace = True
+        )
 
     @staticmethod
     def apply_correct_area_and_property_status_values(row):

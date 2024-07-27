@@ -4,14 +4,15 @@ from src.tools.mongodb import MongoConnection
 
 
 class AbstractCleaner:
-    def __init__(self, collection: str) -> None:
+    def __init__(self, collection_in: str, collection_out: str) -> None:
         self.mongo_conn = MongoConnection()
-        self.mongo_conn.set_collection(collection=collection)
+        self.collection_in = collection_in
+        self.collection_out = collection_out
 
-    def get_collection_dataframe(self):
+    def get_collection_dataframe(self) :
+        self.mongo_conn.set_collection(collection=self.collection_in)
         data = self.mongo_conn.get_data_from_collection()
         self.df = pd.DataFrame(data)
-        return self.df
 
     def reindex_dataframe(self):
         desired_columns = [
@@ -38,3 +39,10 @@ class AbstractCleaner:
         ]
 
         self.df = self.df.reindex(columns=desired_columns)
+    
+    def save_data(self, df: pd.DataFrame):
+        try:
+            self.mongo_conn.set_collection(collection=self.collection_out)
+            self.mongo_conn.save_dataframe(df)
+        except Exception:
+            raise ('It was not possible to save the data in MongoDB')
