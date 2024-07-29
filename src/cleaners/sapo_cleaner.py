@@ -1,6 +1,7 @@
 import json
 import re
 
+import numpy as np
 import pandas as pd
 import pandera as pa
 
@@ -10,11 +11,8 @@ from src.schemas import StageSchema
 
 class SapoCleaner(AbstractCleaner):
     def __init__(self) -> None:
-        super().__init__(
-            collection_in='raw_sapo',
-            collection_out= 'stage_sapo'
-        )
-    
+        super().__init__(collection_in='raw_sapo', collection_out='stage_sapo')
+
     def clean_and_stage(self):
         print('Starting the cleaning...')
         self.clean_data()
@@ -24,7 +22,6 @@ class SapoCleaner(AbstractCleaner):
             self.save_data(self.df)
         except pa.errors.SchemaErrors as exc:
             print(json.dumps(exc.message, indent=2))
-        
 
     def clean_data(self):
         self.get_collection_dataframe()
@@ -72,7 +69,7 @@ class SapoCleaner(AbstractCleaner):
         )
 
         self.df['property_status'] = (
-            self.df['property_status'].str.strip().replace('', None)
+            self.df['property_status'].str.strip().replace('', np.nan)
         )
 
         self.df['area_m2'] = self.df['area_m2'].str.replace(
@@ -114,7 +111,7 @@ class SapoCleaner(AbstractCleaner):
         )
 
         self.df['sub_location_search'] = self.df['sub_location_search'].apply(
-            lambda x: None if not x else x
+            lambda x: np.nan if not x else x
         )
 
     def set_unique_id(self):
@@ -128,25 +125,21 @@ class SapoCleaner(AbstractCleaner):
         pattern = r'([a-zA-Z0-9\-]{32})\.html$'
         self.df['link_id'] = self.df['link'].str.extract(pattern)
         self.df['link_id'] = self.df['link_id'].astype(str)
-        self.df['link_id'] = self.df['link_id'].replace('nan', None)
-    
+        self.df['link_id'] = self.df['link_id'].replace('nan', np.nan)
+
     def drop_columns_and_duplicated(self):
         self.df = self.df.drop(columns=['location', 'info_agg'])
 
         self.df.drop_duplicates(inplace=True)
-        self.df.drop_duplicates(
-            subset=['link_id'], keep = 'first', inplace = True
-        )
-        self.df.dropna(
-            subset=['link_id'], axis= 'index', inplace = True
-        )
+        self.df.drop_duplicates(subset=['link_id'], keep='first', inplace=True)
+        self.df.dropna(subset=['link_id'], axis='index', inplace=True)
 
     @staticmethod
     def apply_correct_area_and_property_status_values(row):
         pattern_has_number = r'\d'
         if re.match(pattern_has_number, row['property_status']):
             row['area_m2'] = row['property_status']
-            row['property_status'] = None
+            row['property_status'] = np.nan
         return row
 
     @staticmethod

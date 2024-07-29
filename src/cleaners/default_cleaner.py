@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 from src.tools.mongodb import MongoConnection
@@ -9,12 +10,15 @@ class AbstractCleaner:
         self.collection_in = collection_in
         self.collection_out = collection_out
 
-    def get_collection_dataframe(self) :
+    def get_collection_dataframe(self):
         self.mongo_conn.set_collection(collection=self.collection_in)
         data = self.mongo_conn.get_data_from_collection()
         self.df = pd.DataFrame(data)
 
     def reindex_dataframe(self):
+        self.df = self.df.fillna(np.nan)
+        self.df['is_available'] = True
+
         desired_columns = [
             'title',
             'price_euro',
@@ -28,6 +32,7 @@ class AbstractCleaner:
             'location_zone_4',
             'location_zone_5',
             'location_zone_6',
+            'is_available',
             'site',
             'link_id',
             'link',
@@ -39,7 +44,7 @@ class AbstractCleaner:
         ]
 
         self.df = self.df.reindex(columns=desired_columns)
-    
+
     def save_data(self, df: pd.DataFrame):
         try:
             self.mongo_conn.set_collection(collection=self.collection_out)
