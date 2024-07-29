@@ -182,3 +182,23 @@ class ImovirtualCrawler(AbstractCrawler):
         df = df.assign(sub_location_search=self.sub_location)
         print('Advertisements extracted:', df.shape[0])
         self.list_dfs.append(df)
+
+
+if __name__ == '__main__':
+    offer_types_search = [
+        # 'comprar',
+        'arrendar'
+    ]
+    property_types_search = [
+        # 'apartamento',
+        'moradia'
+    ]
+    location_search = ['lisboa']
+    sub_location_search = ['']
+
+    ImovirtualCrawler().crawl(
+        offer_types=offer_types_search,
+        property_types=property_types_search,
+        locations=location_search,
+        sub_locations=sub_location_search,
+    )
