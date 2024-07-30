@@ -37,7 +37,7 @@ class SapoCleaner(AbstractCleaner):
 
         self.drop_columns_and_duplicated()
 
-        self.reindex_dataframe()
+        self.normalize_and_reindex_dataframe()
 
     def splitting_location(self):
         df_location_info_splitted = self.df['location'].str.split(

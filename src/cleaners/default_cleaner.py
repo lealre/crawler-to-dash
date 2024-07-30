@@ -15,9 +15,10 @@ class AbstractCleaner:
         data = self.mongo_conn.get_data_from_collection()
         self.df = pd.DataFrame(data)
 
-    def reindex_dataframe(self):
+    def normalize_and_reindex_dataframe(self):
         self.df = self.df.fillna(np.nan)
         self.df['is_available'] = True
+        self.df = self.df.map(lambda x: x.strip() if isinstance(x, str) else x)
 
         desired_columns = [
             'title',
