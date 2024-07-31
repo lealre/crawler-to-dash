@@ -6,6 +6,9 @@ __pycache__/
 # parquet files
 data/
 
+# local test files
+local_test.ipynb
+
 # C extensions
 *.so
 
