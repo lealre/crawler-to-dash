@@ -4,7 +4,7 @@ from datetime import datetime
 import pandas as pd
 
 from src.config.settings import Settings
-from src.tools.mongodb import MongoConnection
+from src.database.mongodb import MongoConnection
 
 
 class AbstractCrawler(ABC):
@@ -31,6 +31,7 @@ class AbstractCrawler(ABC):
 
         if self.save_to_mongo:
             print('Data will be stored in mongoDB')
+            # test mongo conn
         if self.local_storage:
             print('Data will be stored locally as parquet')
 
@@ -47,11 +48,10 @@ class AbstractCrawler(ABC):
         except Exception as e:
             print('Error exporting the file:', str(e))
 
-    def save_data(self, data: pd.DataFrame):
+    def save_data(self, df: pd.DataFrame):
         collection_name = f'raw_{self.site_name}'
         try:
-            self.mongo.set_collection(collection_name)
-            self.mongo.save_dataframe(data)
+            self.mongo.save_dataframe(collection=collection_name, df=df)
         except Exception:
             raise ('It was not possible to save the data in MongoDB')
 

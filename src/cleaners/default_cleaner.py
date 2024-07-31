@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from src.tools.mongodb import MongoConnection
+from src.database.mongodb import MongoConnection
 
 
 class AbstractCleaner:
@@ -48,7 +48,8 @@ class AbstractCleaner:
 
     def save_data(self, df: pd.DataFrame):
         try:
-            self.mongo_conn.set_collection(collection=self.collection_out)
-            self.mongo_conn.save_dataframe(df)
+            self.mongo_conn.save_dataframe(
+                collection=self.collection_out, df=df
+            )
         except Exception:
             raise ('It was not possible to save the data in MongoDB')
