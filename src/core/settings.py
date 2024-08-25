@@ -11,4 +11,6 @@ class Settings(BaseSettings):
     MONGO_DATABASE: str = 'scraper_db'
 
     LOCAL_STORAGE: bool = False
+    LOCAL_BACKUP_PATH: str
+
     SAVE_TO_MONGO: bool = False
