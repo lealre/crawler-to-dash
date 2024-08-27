@@ -1,7 +1,7 @@
 import pandas as pd
 from pymongo import MongoClient
 
-from src.config.settings import Settings
+from src.core.settings import Settings
 
 
 class MongoConnection:
@@ -21,9 +21,6 @@ class MongoConnection:
             self.port = Settings().MONGO_PORT
             self.database_name = Settings().MONGO_DATABASE
             self._connect()
-            print('MongoDB connected')
-        else:
-            print('MongoDB already connected')
 
     def _connect(self):
         self._client = MongoClient(self.host, self.port)
@@ -33,21 +30,19 @@ class MongoConnection:
         return self._client.server_info()
 
     def set_collection(self, collection: str):
-        self.collection_name = collection
-        self._collection = self._db[self.collection_name]
+        self._collection = self._db[collection]
 
     def get_data_from_collection(self) -> list[dict]:
         documents = self._collection.find()
         return list(documents)
 
-    def save_dataframe(self, collection: str, df: pd.DataFrame):
+    def save_data(self, collection: str, data: list[dict]):
         self.set_collection(collection=collection)
-        data = df.to_dict(orient='records')
         if data:
-            self._collection.insert_many(data)
+            self._collection.insert_many(data, ordered=False)
             print(f'DataFrame saved in MongoDB. Added {len(data)} recods.')
         else:
-            print('There are no records to insert. DataFrame is empty.')
+            print('There are no records to insert.')
 
     def close_connection(self):
         if self._client:

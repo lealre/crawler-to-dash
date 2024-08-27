@@ -24,8 +24,8 @@ class AbstractCrawler(ABC):
         pass
 
     def check_before_crawl(self): 
-        self.save_to_mongo = Settings().SAVE_TO_MONGO
-        self.local_storage = Settings().LOCAL_STORAGE
+        self.save_to_mongo = settings.SAVE_TO_MONGO
+        self.local_storage = settings.LOCAL_STORAGE
 
         if self.save_to_mongo:
             print('Data will be stored in mongoDB')
@@ -48,9 +48,8 @@ class AbstractCrawler(ABC):
             print('Error exporting the file:', str(e))
 
     def save_data(self):
-        ...
         collection_name = f'raw_{self.site_name}'
         try:
-            ... # ToDo: save to mogo
+            self.mongo.save_data(data=self.data, collection=collection_name) # ToDo: save to mogo
         except Exception:
             raise ('It was not possible to save the data in MongoDB')

@@ -42,12 +42,12 @@ from src.crawler.default_crawler import AbstractCrawler
 
 
 class ImovirtualCrawler(AbstractCrawler):
-    def __init__(self, site_name: str = 'imovirtual'):
+    def __init__(self, site_name: str = 'imovirtual_test'):
         super().__init__(site_name)
         self.base_url = 'https://www.imovirtual.com/pt/resultados/'
         self.params = {'limit': 72}
     
-    def crawl(
+    async def crawl(
         self,
         offer_types: list[str] = ['comprar'],
         property_types: list[str] = ['lisboa'],
@@ -80,14 +80,14 @@ class ImovirtualCrawler(AbstractCrawler):
                 self.url = f'{self.url}/{sub_location}'
 
             total_pages = self.get_number_of_pages()
-            responses = self.fetch_all(total_pages=total_pages)
+            responses = await self.fetch_all(total_pages=total_pages)
             list_ads = self.extract_ads(responses=responses)
 
             self.data.extend(list_ads)
         
         if self.save_to_mongo:
             ... # ToDo
-            self.save_data(self.data)
+            self.save_data()
         if self.local_storage:
             self.save_local_json()
 
@@ -129,7 +129,8 @@ class ImovirtualCrawler(AbstractCrawler):
                 for params in params_list
             ]
             responses = await asyncio.gather(*tasks)
-            return responses
+        
+        return responses
     
     def extract_ads(self, responses: list[Response]) -> list[dict]:
         # Add logging here to capture responses with status codes other than 200
@@ -159,9 +160,11 @@ if __name__ == '__main__':
     location_search = ['lisboa']
     sub_location_search = ['']
 
-    ImovirtualCrawler().crawl(
-        offer_types=offer_types_search,
-        property_types=property_types_search,
-        locations=location_search,
-        sub_locations=sub_location_search,
+    asyncio.run(
+        ImovirtualCrawler().crawl(
+            offer_types=offer_types_search,
+            property_types=property_types_search,
+            locations=location_search,
+            sub_locations=sub_location_search,
+        )
     )

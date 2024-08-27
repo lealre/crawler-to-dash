@@ -37,7 +37,6 @@ preview = true
 quote-style = "single"
 
 [tool.taskipy.tasks]
-sapo = 'python src/crawlers/sapo_crawler.py'
-imovirtual = 'python src/crawlers/imovirtual_crawler.py'
+imovirtual = 'python src/crawler/imovirtual_crawler.py'
 lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
