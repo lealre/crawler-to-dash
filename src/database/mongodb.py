@@ -26,9 +26,18 @@ class MongoConnection:
             self.host, self.port, serverSelectionTimeoutMS=7000
         )
         self._db = self._client[self.database_name]
-
-    def server_info(self):
-        return self._client.server_info()
+    
+    def ping(self) -> bool:
+        """Pings the MongoDB server to check if the connection is alive."""
+        try:
+            self._client.admin.command('ping')
+            return True
+        except errors.ServerSelectionTimeoutError:
+            print("Server selection timed out. Unable to connect.")
+            return False
+        except errors.PyMongoError as e:
+            print(f"An error occurred while connecting to MongoDB: {e}")
+            return False
 
     def set_collection(self, collection: str):
         self._collection = self._db[collection]
@@ -54,8 +63,8 @@ class MongoConnection:
                         e.details.get(
                             'writeErrors', 'No detailed message available'
                         )
-                    }\n'
-                    f'Full Error Details: {error_details}'
+                    }'
+                    f'\nFull Error Details: {error_details}'
                 )
                 raise RuntimeError(error_message) from e
         else:

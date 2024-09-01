@@ -29,8 +29,10 @@ class AbstractCrawler(ABC):
         self.local_storage = settings.LOCAL_STORAGE
 
         if self.save_to_mongo:
-            print('Data will be stored in mongoDB')
-            # ToDo: Test mongo connection before crawl
+            if self.mongo.ping():
+                print('Data will be stored in mongoDB')
+            else:
+                raise SystemExit('Its not possible to save data in MongoDB.')
         if self.local_storage:
             print('Data will be stored locally as Json file')
 
