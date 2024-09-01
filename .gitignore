@@ -3,8 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# parquet files
-data/
+# local files
+_local/
 
 # C extensions
 *.so
