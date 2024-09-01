@@ -1,5 +1,4 @@
-import pandas as pd
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 
 from src.core.settings import Settings
 
@@ -23,7 +22,9 @@ class MongoConnection:
             self._connect()
 
     def _connect(self):
-        self._client = MongoClient(self.host, self.port)
+        self._client = MongoClient(
+            self.host, self.port, serverSelectionTimeoutMS=7000
+        )
         self._db = self._client[self.database_name]
 
     def server_info(self):
@@ -38,9 +39,25 @@ class MongoConnection:
 
     def save_data(self, collection: str, data: list[dict]):
         self.set_collection(collection=collection)
+
         if data:
-            self._collection.insert_many(data, ordered=False)
-            print(f'DataFrame saved in MongoDB. Added {len(data)} recods.')
+            try:
+                self._collection.insert_many(data)
+                print(f'Json saved in MongoDB. Added {len(data)} recods.')
+            except errors.BulkWriteError as e:
+                error_details = e.details if hasattr(e, 'details') else str(e)
+                error_message = (
+                    f'An error occurred while inserting documents '
+                    'into MongoDB:\n'
+                    f'Error Code: {e.code}\n'
+                    f'Error Message: {
+                        e.details.get(
+                            'writeErrors', 'No detailed message available'
+                        )
+                    }\n'
+                    f'Full Error Details: {error_details}'
+                )
+                raise RuntimeError(error_message) from e
         else:
             print('There are no records to insert.')
 

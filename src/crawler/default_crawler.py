@@ -7,6 +7,7 @@ from src.database.mongodb import MongoConnection
 
 settings = Settings()
 
+
 class AbstractCrawler(ABC):
     def __init__(self, site_name: str):
         self.data: list[dict] = []
@@ -23,7 +24,7 @@ class AbstractCrawler(ABC):
     def crawl(self):
         pass
 
-    def check_before_crawl(self): 
+    def check_before_crawl(self):
         self.save_to_mongo = settings.SAVE_TO_MONGO
         self.local_storage = settings.LOCAL_STORAGE
 
@@ -39,17 +40,15 @@ class AbstractCrawler(ABC):
         path_to_save = f'{self.output_path}/{file_name}.json'
 
         try:
-            with open(path_to_save, 'w') as json_file:
+            with open(path_to_save, 'w', encoding='utf-8') as json_file:
                 json.dump(self.data, json_file, indent=4)
-            print(
-                f"Json file saved in '{self.output_path}' as '{file_name}'"
-            )
+            print(f"Json file saved in '{self.output_path}' as '{file_name}'")
         except Exception as e:
             print('Error exporting the file:', str(e))
 
     def save_data(self):
         collection_name = f'raw_{self.site_name}'
         try:
-            self.mongo.save_data(data=self.data, collection=collection_name) # ToDo: save to mogo
+            self.mongo.save_data(data=self.data, collection=collection_name)
         except Exception:
             raise ('It was not possible to save the data in MongoDB')
