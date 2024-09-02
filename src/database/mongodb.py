@@ -33,18 +33,34 @@ class MongoConnection:
             self._client.admin.command('ping')
             return True
         except errors.ServerSelectionTimeoutError:
-            print("Server selection timed out. Unable to connect.")
+            print("Server selection timed out. Unable to connect to MongoDB.")
             return False
         except errors.PyMongoError as e:
             print(f"An error occurred while connecting to MongoDB: {e}")
             return False
 
-    def set_collection(self, collection: str):
+    def set_collection(self, collection: str, unique_index: str = '') -> None:
         self._collection = self._db[collection]
 
-    def get_data_from_collection(self) -> list[dict]:
-        documents = self._collection.find()
-        return list(documents)
+        if unique_index:
+            collection_indexes = self._collection.index_information()
+            indexes = [
+                index_info['key'][0][0] 
+                for _, index_info in collection_indexes.items()
+            ]
+
+            if unique_index in indexes:
+                print(
+                    f'"{unique_index}" is already a unique index from '
+                    f'"{collection}" collection'
+                )
+            else:
+                self._collection.create_index([(unique_index, 1)], unique = True)
+                print(
+                    f'Unique index {unique_index} created for '
+                    f'"{collection}" collection'
+                )
+
 
     def save_data(self, collection: str, data: list[dict]):
         self.set_collection(collection=collection)
@@ -70,7 +86,18 @@ class MongoConnection:
         else:
             print('There are no records to insert.')
 
+    def get_data_from_collection(self, collection: str) -> list[dict]:
+        self.set_collection(collection=collection)
+        documents = self._collection.find()
+        return list(documents)
+    
+    def set_unique_index(self, collection: str, index: str):
+        self.set_collection(collection=collection)
+        self._collection.create_index([('id', 1)], unique = True)
+        return self._collection.index_information()
+    
     def close_connection(self):
         if self._client:
             self._client.close()
             print('Connection closed successfully.')
+

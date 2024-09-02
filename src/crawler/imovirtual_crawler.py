@@ -88,7 +88,7 @@ class ImovirtualCrawler(AbstractCrawler):
 
             self.data.extend(list_ads)
 
-        print(f'Total Ads extracted: {len(self.data)}')
+        print(f'{20 * '-'}\nTotal Ads extracted: {len(self.data)}')
 
         if self.local_storage:
             self.save_local_json()
@@ -163,8 +163,8 @@ class ImovirtualCrawler(AbstractCrawler):
                 all_ads.extend(list_ads_promoted)
 
                 print(
-                    f'{len(list_ads) + len(list_ads_promoted)}'
-                    'ads extracted from {response.url}'
+                    f'{len(list_ads) + len(list_ads_promoted)} '
+                    f'ads extracted from {response.url}'
                 )
 
         return all_ads
