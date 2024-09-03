@@ -45,7 +45,7 @@ from src.crawler.default_crawler import AbstractCrawler
 
 
 class ImovirtualCrawler(AbstractCrawler):
-    def __init__(self, site_name: str = 'imovirtual_test'):
+    def __init__(self, site_name: str = 'imovirtual'):
         super().__init__(site_name)
         self.base_url = 'https://www.imovirtual.com/pt/resultados/'
         self.params = {'limit': 72}
@@ -72,6 +72,8 @@ class ImovirtualCrawler(AbstractCrawler):
                 location,
                 sub_location,
             ) = [*combination]
+
+            print(f' -- Query Search: {offer_type}, {property_type} -- ')
 
             self.url = (
                 f'{self.base_url}{offer_type}/' f'{property_type}/{location}'
@@ -120,7 +122,7 @@ class ImovirtualCrawler(AbstractCrawler):
         total_results = int(pagination['totalResults'])
 
         print(f'Total results found: {total_results}')
-        print(f'Total pages: {total_results}')
+        print(f'Total pages: {total_pages}')
 
         return total_pages
 
@@ -145,20 +147,21 @@ class ImovirtualCrawler(AbstractCrawler):
 
     @staticmethod
     def extract_ads(responses: list[Response]) -> list[dict]:
+        print('Data extraction started..')
         # Add logging here to capture responses with status codes other than 200 # noqa
         all_ads: list = []
         for response in responses:
             if response.status_code == HTTPStatus.OK:
                 html = response.text
                 soup = BeautifulSoup(html, 'html.parser')
+
                 scripts = soup.find_all('script')
                 json_data = json.loads(scripts[-1].text)
-                list_ads = json_data['props']['pageProps']['data'][
-                    'searchAds'
-                ]['items']
-                list_ads_promoted = json_data['props']['pageProps']['data'][
-                    'searchAdsRandomPromoted'
-                ]['items']
+
+                data = json_data['props']['pageProps']['data']
+                list_ads = data['searchAds']['items']
+                list_ads_promoted = data['searchAdsRandomPromoted']['items']
+
                 all_ads.extend(list_ads)
                 all_ads.extend(list_ads_promoted)
 
@@ -172,11 +175,11 @@ class ImovirtualCrawler(AbstractCrawler):
 
 if __name__ == '__main__':
     offer_types_search = [
-        # 'comprar',
+        'comprar',
         'arrendar'
     ]
     property_types_search = [
-        # 'apartamento',
+        'apartamento',
         'moradia'
     ]
     location_search = ['lisboa']

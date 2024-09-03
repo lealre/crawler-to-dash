@@ -23,7 +23,7 @@ def test_update_availability(
 ):
     expected_lenth = 2
 
-    ids_to_update = Consolidate.update_availability(
+    ids_to_update = Consolidate.ads_to_update_availability(
         consolidated_data=consolidated_data, filtered_data=filtered_data
     )
 
@@ -37,7 +37,7 @@ def test_insert_new_ads(
     expected_length = 5
     consolidated_ids = [item.get('id') for item in consolidated_data]
 
-    new_ads = Consolidate.insert_new_ads(
+    new_ads = Consolidate.new_ads_to_insert(
         consolidated_data=consolidated_data, filtered_data=filtered_data
     )
 

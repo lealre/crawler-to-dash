@@ -26,8 +26,33 @@ class Consolidate:
             self.filter_unique_and_add_availability(self.raw_data)
         )
 
+        self.update_availability()
+        self.insert_new_ads()
+
+    def update_availability(self) -> None:
+        ids_to_update = self.ads_to_update_availability(
+            consolidated_data=self.consolidated_data,
+            filtered_data=self.filtered_data,
+        )
+
+        self.mongo.update_is_available(
+            collection=self.consolidated_collection,
+            unique_index='id',
+            ids=ids_to_update,
+        )
+
+    def insert_new_ads(self) -> None:
+        new_ads = self.new_ads_to_insert(
+            consolidated_data=self.consolidated_data,
+            filtered_data=self.filtered_data,
+        )
+
+        self.mongo.save_data(
+            collection=self.consolidated_collection, data=new_ads
+        )
+
     @staticmethod
-    def update_availability(
+    def ads_to_update_availability(
         consolidated_data: list[dict], filtered_data: list[dict]
     ) -> list[str]:
         filtered_ids = [item.get('id') for item in filtered_data]
@@ -44,7 +69,7 @@ class Consolidate:
         return ids_to_update
 
     @staticmethod
-    def insert_new_ads(
+    def new_ads_to_insert(
         consolidated_data: list[dict], filtered_data: list[dict]
     ) -> list[dict]:
         consolidated_ids = [item.get('id') for item in consolidated_data]
@@ -69,3 +94,9 @@ class Consolidate:
                 data_filtered.append(item)
 
         return data_filtered
+
+
+if __name__ == '__main__':
+    consolidate = Consolidate(raw_collection='raw_imovirtual')
+
+    consolidate.consolidate()
