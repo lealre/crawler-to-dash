@@ -38,7 +38,7 @@ preview = true
 quote-style = "single"
 
 [tool.taskipy.tasks]
-crawl = 'python src/crawler/imovirtual_crawler.py'
-consolidate = 'python src/consolidate.py'
+crawl = 'python src/data_workflow/crawler/imovirtual_crawler.py'
+consolidate = 'python src/data_workflow/consolidate.py'
 lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'

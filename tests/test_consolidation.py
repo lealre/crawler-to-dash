@@ -1,6 +1,6 @@
 from typing import Any
 
-from src.consolidate import Consolidate
+from src.data_workflow.consolidate import Consolidate
 
 
 def test_filter_unique_and_add_availability(raw_data: list[dict]):
