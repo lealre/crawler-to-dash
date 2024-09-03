@@ -1,7 +1,4 @@
-import json
-
 from src.database.mongodb import MongoConnection
-
 
 # with open(json_path, 'r', encoding='utf-8') as file:
 #     data = json.load(file)
@@ -13,7 +10,9 @@ collection_consolidated = 'consolidated_imovirtual'
 
 mongo = MongoConnection()
 
-consolidated_data = mongo.get_data_from_collection(collection=collection_consolidated)
+consolidated_data = mongo.get_data_from_collection(
+    collection=collection_consolidated
+)
 raw_data = mongo.get_data_from_collection(collection=raw_collection)
 
 # Filter unique ids in raw
@@ -31,10 +30,7 @@ for item in raw_data:
 to_update_availability: list = []
 for item in consolidated_data:
     id = item.get('id')
-    if (
-        id not in raw_filtered
-        and item.get('is_available', False)
-    ):
+    if id not in raw_filtered and item.get('is_available', False):
         to_update_availability.append(id)
 
 

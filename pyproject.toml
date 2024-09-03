@@ -20,6 +20,7 @@ requests = "^2.32.3"
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.5.4"
 taskipy = "^1.13.0"
+pytest = "^8.3.2"
 
 [build-system]
 requires = ["poetry-core"]
