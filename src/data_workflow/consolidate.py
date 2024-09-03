@@ -1,4 +1,4 @@
-from src.database.mongodb import MongoConnection
+from src.core.mongodb import MongoConnection
 
 
 class Consolidate:

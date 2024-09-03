@@ -21,7 +21,7 @@ class MongoConnection:
             self.database_name = settings.MONGO_DATABASE
             self._connect()
 
-    def _connect(self):
+    def _connect(self) -> None:
         self._client = MongoClient(
             self.host,
             self.port,
@@ -63,33 +63,36 @@ class MongoConnection:
                     f'"{collection}" collection'
                 )
 
-    def save_data(self, collection: str, data: list[dict]):
-        self.set_collection(collection=collection)
+    def save_data(
+        self, collection: str, data: list[dict], unique_index: str = ''
+    ) -> None:
+        self.set_collection(collection=collection, unique_index=unique_index)
 
         if data:
             try:
                 self._collection.insert_many(data)
-                print(f'Json saved in MongoDB. Added {len(data)} recods.')
-            except errors.BulkWriteError as e:
-                error_details = e.details if hasattr(e, 'details') else str(e)
-                error_message = (
-                    f'An error occurred while inserting documents '
-                    'into MongoDB:\n'
-                    f'Error Code: {e.code}\n'
-                    f'Error Message: {
-                        e.details.get(
-                            'writeErrors', 'No detailed message available'
-                        )
-                    }'
-                    f'\nFull Error Details: {error_details}'
+                print(
+                    'Data saved in MongoDB. '
+                    f'Added {len(data)} records to {collection}'
                 )
-                raise RuntimeError(error_message) from e
+            except errors.BulkWriteError as e:
+                print('It was not possible to save data in MongoDB.')
+                raise SystemExit(
+                    f'ERROR: {e.details['writeErrors'][0]['errmsg']}'
+                )
         else:
             print('There are no records to insert.')
 
-    def get_data_from_collection(self, collection: str) -> list[dict]:
+    def get_data_from_collection(
+        self,
+        collection: str,
+        filter: dict | None = None,
+        fields: list | None = None,
+    ) -> list[dict]:
         self.set_collection(collection=collection)
-        documents = self._collection.find()
+
+        projection = {field: 1 for field in fields} if fields else None
+        documents = self._collection.find(filter=filter, projection=projection)
         return list(documents)
 
     def update_is_available(
@@ -108,7 +111,7 @@ class MongoConnection:
         except errors.PyMongoError as e:
             print(f'An error occurred: {e}')
 
-    def close_connection(self):
+    def close_connection(self) -> None:
         if self._client:
             self._client.close()
             print('Connection closed successfully.')

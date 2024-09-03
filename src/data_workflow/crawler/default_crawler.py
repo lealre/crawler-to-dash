@@ -2,8 +2,8 @@ import json
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+from src.core.mongodb import MongoConnection
 from src.core.settings import Settings
-from src.database.mongodb import MongoConnection
 
 settings = Settings()
 
