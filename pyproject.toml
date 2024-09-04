@@ -16,11 +16,17 @@ httpx = "^0.27.0"
 asyncio = "^3.4.3"
 requests = "^2.32.3"
 
-
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.5.4"
 taskipy = "^1.13.0"
 pytest = "^8.3.2"
+ipykernel = "^6.29.5"
+notebook = "^7.2.2"
+
+
+[tool.poetry.group.dash.dependencies]
+dash = "^2.18.0"
+dash-bootstrap-components = "^1.6.0"
 
 [build-system]
 requires = ["poetry-core"]
