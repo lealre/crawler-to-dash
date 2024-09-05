@@ -94,7 +94,7 @@ class MongoConnection:
         projection = {field: 1 for field in fields} if fields else None
 
         if not projection:
-             projection = {'_id': 0}
+            projection = {'_id': 0}
 
         documents = self._collection.find(filter=filter, projection=projection)
         return list(documents)
