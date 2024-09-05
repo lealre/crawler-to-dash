@@ -27,6 +27,7 @@ notebook = "^7.2.2"
 [tool.poetry.group.dash.dependencies]
 dash = "^2.18.0"
 dash-bootstrap-components = "^1.6.0"
+plotly = "^5.24.0"
 
 [build-system]
 requires = ["poetry-core"]
