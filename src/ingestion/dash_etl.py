@@ -1,3 +1,5 @@
+import pandas as pd
+
 from src.core.mongodb import MongoConnection
 
 FIELDS = [
@@ -15,10 +17,26 @@ FIELDS = [
 
 UNIQUE_INDEX = 'id'
 
+VALUES_TO_MAP = {
+    'ONE': 'T0',
+    'TWO': 'T1',
+    'THREE': 'T2',
+    'FOUR': 'T3',
+    'FIVE': 'T4',
+    'SIX': 'T5',
+    'SEVEN': 'T6',
+    'EIGHT': 'T7',
+    'NINE': 'T8',
+    'MORE': 'T9+'
+}
+
 
 def extract_data(
     mongo_conn: MongoConnection, collection_name: str
 ) -> list[dict]:
+    if not mongo_conn.ping():
+        raise SystemExit()
+
     data = mongo_conn.get_data_from_collection(
         collection=collection_name, fields=FIELDS
     )
@@ -26,7 +44,7 @@ def extract_data(
     return data
 
 
-def transform_data(data: list[dict]) -> list[dict]:
+def filter_data(data: list[dict]) -> list[dict]:
     for item in data:
         location = (
             item.get('location', {})
@@ -57,6 +75,25 @@ def transform_data(data: list[dict]) -> list[dict]:
     return data
 
 
+def transform_data(data: list[dict]) -> list[dict]:
+    df = pd.DataFrame(data)
+
+    df.dropna(inplace=True)
+
+    df['roomsNumberNotation'] = df['roomsNumber'].map(VALUES_TO_MAP)
+
+    df = df[df.location.str.startswith('lisboa/')]
+
+    df['location'] = (
+        df['location']
+        .str.replace('lisboa/', '')
+        .str.replace('-', ' ')
+        .str.title()
+    )
+
+    return df.to_dict(orient='records')
+
+
 def load_data(
     mongo_conn: MongoConnection, data: list[dict], collection_name: str
 ) -> None:
@@ -70,7 +107,9 @@ def dash_pipeline(
 ) -> None:
     data = extract_data(mongo_conn=mongo_conn, collection_name=extract_from)
 
-    transformed_data = transform_data(data=data)
+    filtered_data = filter_data(data=data)
+
+    transformed_data = transform_data(data=filtered_data)
 
     load_data(
         mongo_conn=mongo_conn, collection_name=load_to, data=transformed_data
