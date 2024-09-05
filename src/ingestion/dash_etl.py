@@ -27,6 +27,7 @@ VALUES_TO_MAP = {
     'SEVEN': 'T6',
     'EIGHT': 'T7',
     'NINE': 'T8',
+    'TEN': 'T9',
     'MORE': 'T9+'
 }
 
