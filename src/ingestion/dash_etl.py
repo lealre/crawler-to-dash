@@ -28,7 +28,7 @@ VALUES_TO_MAP = {
     'EIGHT': 'T7',
     'NINE': 'T8',
     'TEN': 'T9',
-    'MORE': 'T9+'
+    'MORE': 'T9+',
 }
 
 
