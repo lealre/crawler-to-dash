@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def get_data() -> pd.DataFrame:
     file = '_local/data.json'
 
