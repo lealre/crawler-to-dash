@@ -1,41 +1,23 @@
 import dash_bootstrap_components as dbc
-from dash import Dash, html
 
-from src.dash.components import (
-    card_component,
-    heatmap_component,
-    overall_component,
-    proportion_component,
-)
-from src.dash.data import get_data
+from src.dash.components.head.head import Head
+from src.dash.components.body.body import Body
+from src.dash.components.app import app
 
-df = get_data()
-
-app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+head = Head()
+body = Body()
 
 app.layout = dbc.Container(
-    [
-        html.H1(
-            'Lisbon Properties Dash',
-            style={'textAlign': 'center', 'padding-bottom': '20px'},
-        ),
-        dbc.Row([
-            card_component('Total Ads', df.shape[0]),
-            card_component('Median Price', f'{df.totalPrice.median()} €'),
-            card_component(
-                'Median Price / m2',
-                f'{df.pricePerSquareMeter.median()} € / m2',
-            ),
-        ]),
-        overall_component(),
-        html.Br(),
-        proportion_component(),
-        html.Br(),
-        heatmap_component(),
-    ],
-    style={'max-width': '90%'},
+    [head.component, body.component],
+    fluid = True,
+    style = {
+        # 'height': '100vh', 
+        'width': '100%', 
+        'padding': "25px 25px 0px 25px",
+        'background-color': '#191C24'
+    },
 )
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run_server(debug = True, port = 8051)
