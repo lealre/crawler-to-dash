@@ -2,46 +2,12 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from dash import dcc, html, dash_table, Input, Output
+from dash import Input, Output, dash_table, dcc, html
 
 from src.dash.components.app import app
 from src.dash.data import Data
 
 df = Data().get_data()
-
-
-def overall_component():
-    component = dbc.Row([
-        html.H2('Overall Information', style={'padding-bottom': '10px'}),
-            dbc.Row([
-                dbc.Col([
-                    dcc.Dropdown(
-                        df['estate'].unique(),
-                        value = None,
-                        id='estate-type',
-                        placeholder='Select Type of Property',
-                    ),
-                ], md = 3),
-                dbc.Col([
-                    dcc.Checklist(
-                        ['Log X Axis', 'Log Y Axis'],
-                        inline=True
-                    )
-                ], md = 3),
-            dcc.Graph(id = 'scatter-figure'),
-            html.Div([
-                html.P('Area Slider'),
-                dcc.RangeSlider(
-                    -5, 
-                    6, 
-                    marks={i: f'Label{i}' for i in range(-5, 7)},
-                    value=[-3, 4]
-                )
-            ])
-        ])
-    ])
-
-    return component
 
 
 def heatmap_component():
@@ -116,7 +82,7 @@ def proportion_component():
 
     fig.update_layout(
         margin=dict(l=16, r=16, t=16, b=16),
-        template = 'plotly_dark'
+        template='plotly_dark'
     )
 
     component = dbc.Row([
@@ -152,9 +118,10 @@ def table():
             data=example_data.to_dict('records'),  # Convert DataFrame to dict
             columns=[{'name': col, 'id': col} for col in example_data.columns],  # Define columns
         )
-    ], md = 3)
+    ], md=3)
 
     return component
+
 
 @app.callback(
     Output('scatter-figure', 'figure'),
@@ -176,7 +143,7 @@ def scatter_plot(estate_type):
         x='areaInSquareMeters',
         color='roomsNumberNotation',
         color_discrete_map=color_map,
-        size = 'totalPrice',
+        size='totalPrice',
         log_x=True,
         log_y=True,
     )

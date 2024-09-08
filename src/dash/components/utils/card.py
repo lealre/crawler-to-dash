@@ -1,6 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
+
 def card_component(title, data):
     component = dbc.Col(
         dbc.Card(

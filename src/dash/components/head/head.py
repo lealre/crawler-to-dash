@@ -1,14 +1,15 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-from src.dash.data import Data
 from src.dash.components.utils.card import card_component
+from src.dash.data import Data
+
 
 class Head(Data):
     def __init__(self) -> None:
         super().__init__()
         self._component = self.get_component()
-    
+
     def get_component(self):
         component = dbc.Row([
             html.H1(
@@ -26,9 +27,7 @@ class Head(Data):
         ])
 
         return component
-    
+
     @property
     def component(self):
         return self._component
-
-
