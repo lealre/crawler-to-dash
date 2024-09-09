@@ -8,9 +8,8 @@ def card_component(title, data):
             dbc.CardBody(
                 [html.H4(title), html.H4(data)], style={'color': 'white'}
             ),
-            color='dark',
+            color='#2A3439',
             outline=True,
-            className='text-dark',
             style={'textAlign': 'center', 'margin-bottom': '20px'},
         ),
     )

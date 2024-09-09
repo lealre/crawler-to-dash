@@ -53,49 +53,6 @@ def heatmap_component():
     return component
 
 
-def proportion_component():
-    proportion = (
-        df.value_counts(['roomsNumberNotation', 'location'], normalize=True)
-        .to_frame()
-        .reset_index()
-    )
-
-    fig = px.treemap(
-        proportion,
-        path=['location', 'roomsNumberNotation'],
-        values='proportion',
-        branchvalues='total',
-    )
-    fig.update_traces(
-        texttemplate=(
-            '<b>%{label}</b><br>'
-            '%{percentParent:.2%} of Location<br>'
-            '%{percentRoot:.2%} of Overall'
-        ),
-        hovertemplate=(
-            '<b>%{label}</b><br>'
-            'Location Percentage: %{percentParent:.2%}<br>'
-            'Overall Percentage: %{percentRoot:.2%}<extra></extra>'
-        ),
-        textfont=dict(size=14),
-    )
-
-    fig.update_layout(
-        margin=dict(l=16, r=16, t=16, b=16),
-        template='plotly_dark'
-    )
-
-    component = dbc.Row([
-        html.H2(
-            'Ads proportio per Location and Number of Rooms',
-            style={'padding-bottom': '20px'},
-        ),
-        dcc.Graph(figure=fig),
-    ])
-
-    return component
-
-
 def table():
 
     data = {

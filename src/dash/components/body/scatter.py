@@ -24,56 +24,64 @@ def get_component(df: pd.DataFrame):
 
     dropdown_options = list(df['estate'].unique())
 
-    component = dbc.Row([
-        html.H2('Overall Information', style={'padding-bottom': '10px'}),
-        dbc.Row([
-            dbc.Col(
-                [
-                    dcc.Dropdown(
-                        dropdown_options,
-                        value=None,
-                        id='estate-type',
-                        placeholder='Select Type of Property',
-                    ),
-                ],
-                md=3
-            ),
-            dbc.Col(
-                [
-                    dcc.Checklist(
-                        options={
-                            'log_x': 'Log X Axis',
-                            'log_y': 'Log Y Axis',
-                        },
-                        value=['log_x', 'log_y'],
-                        inline=True,
-                        id='log-axis',
-                    )
-                ],
-                md=3
-            ),
-            dcc.Graph(id='scatter-figure'),
-            html.Div([
-                html.P('Area Slider - ToDo'),
-                dcc.RangeSlider(1, 10,
-                    marks=AREA_MARKS_LABELS,
-                    value=[1, 10],
-                    dots=False,
-                    step=None,
-                    allowCross=False,
-                    updatemode='drag',
-                    id='area-mark'
+    component = dbc.Row(
+        [
+            html.H2('Overall Information', style={'padding-bottom': '10px'}),
+            dbc.Row([
+                dbc.Col(
+                    [
+                        dcc.Dropdown(
+                            dropdown_options,
+                            value=None,
+                            id='estate-type-scatter',
+                            placeholder='Select Type of Property',
+                        ),
+                    ],
+                    md=3
                 ),
+                dbc.Col(
+                    [
+                        dcc.Checklist(
+                            options={
+                                'log_x': 'Log X Axis',
+                                'log_y': 'Log Y Axis',
+                            },
+                            value=['log_x', 'log_y'],
+                            inline=True,
+                            id='log-axis',
+                        )
+                    ],
+                    md=3
+                ),
+                dcc.Graph(id='scatter-figure'),
+                html.Div([
+                    html.P('Area Slider - ToDo'),
+                    dcc.RangeSlider(1, 10,
+                        marks=AREA_MARKS_LABELS,
+                        value=[1, 10],
+                        dots=False,
+                        step=None,
+                        allowCross=False,
+                        updatemode='drag',
+                        id='area-mark'
+                    ),
+                ])
             ])
-        ])
-    ])
+        ],
+        style={
+            'backgroundColor': '#2A3439',
+            'color': '#ffffff',
+            'padding': '20px',
+            'border-radius': '20px'
+        }
+    )
 
     return component
 
 
 @app.callback(
     Output('scatter-figure', 'figure'),
-    Input('estate-type', 'value'),
+    Input('estate-type-scatter', 'value'),
     Input('log-axis', 'value'),
     Input('area-mark', 'value')
 )
@@ -127,5 +135,13 @@ def scatter_plot(estate_type, log_axis, area_mark):
     '''Log axis filter'''
     fig.update_xaxes(type='log' if 'log_x' in log_axis else 'linear')
     fig.update_yaxes(type='log' if 'log_y' in log_axis else 'linear')
+
+    fig.update_layout(
+        transition_duration=500,
+        margin=dict(l=0, r=0, t=20, b=0),
+        paper_bgcolor='rgba(0, 0, 0, 0)',
+        plot_bgcolor='rgba(0, 0, 0, 0)',
+        font=dict(color='white'),
+    )
 
     return fig
