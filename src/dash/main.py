@@ -12,8 +12,8 @@ app.layout = dbc.Container(
     fluid=True,
     style={
         'width': '100%',
-        'padding': "25px 25px 25px 25px",
-        'background-color': '#191c24'
+        'padding': "15px 25px 25px 25px",
+        'background-color': '#191c24',
     },
 )
 

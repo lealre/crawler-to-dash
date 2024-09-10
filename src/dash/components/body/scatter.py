@@ -26,7 +26,10 @@ def get_component(df: pd.DataFrame):
 
     component = dbc.Row(
         [
-            html.H2('Overall Information', style={'padding-bottom': '10px'}),
+            html.H3(
+                'Price vs. Area with Price per Square Meter by Room Count',
+                style={'padding-bottom': '10px'}
+            ),
             dbc.Row([
                 dbc.Col(
                     [
@@ -35,6 +38,10 @@ def get_component(df: pd.DataFrame):
                             value=None,
                             id='estate-type-scatter',
                             placeholder='Select Type of Property',
+                            style={
+                                'color': 'black',
+                                'backgroundColor': 'white',
+                            },
                         ),
                     ],
                     md=3
@@ -55,7 +62,7 @@ def get_component(df: pd.DataFrame):
                 ),
                 dcc.Graph(id='scatter-figure'),
                 html.Div([
-                    html.P('Area Slider - ToDo'),
+                    html.P('Area Slider'),
                     dcc.RangeSlider(1, 10,
                         marks=AREA_MARKS_LABELS,
                         value=[1, 10],
@@ -63,7 +70,7 @@ def get_component(df: pd.DataFrame):
                         step=None,
                         allowCross=False,
                         updatemode='drag',
-                        id='area-mark'
+                        id='area-mark',
                     ),
                 ])
             ])
@@ -72,7 +79,8 @@ def get_component(df: pd.DataFrame):
             'backgroundColor': '#2A3439',
             'color': '#ffffff',
             'padding': '20px',
-            'border-radius': '20px'
+            'border-radius': '20px',
+            'margin': '10px 20px 10px 10px'
         }
     )
 
@@ -142,6 +150,8 @@ def scatter_plot(estate_type, log_axis, area_mark):
         paper_bgcolor='rgba(0, 0, 0, 0)',
         plot_bgcolor='rgba(0, 0, 0, 0)',
         font=dict(color='white'),
+        xaxis_title='Area (m²)',
+        yaxis_title='Price (€)',
     )
 
     return fig

@@ -13,8 +13,8 @@ def get_component(df: pd.DataFrame):
 
     component = dbc.Row(
         [
-            html.H2(
-                'Ads proportion per Location and Number of Rooms',
+            html.H3(
+                'Property Ads Breakdown by Location and Number of Rooms',
                 style={'padding-bottom': '20px'},
             ),
             dbc.Row([
@@ -25,6 +25,10 @@ def get_component(df: pd.DataFrame):
                             value=None,
                             id='estate-type-treemap',
                             placeholder='Select Type of Property',
+                            style={
+                                'color': 'black',
+                                'backgroundColor': 'white',
+                            },
                         ),
                     ],
                     md=3
@@ -36,7 +40,8 @@ def get_component(df: pd.DataFrame):
             'backgroundColor': '#2A3439',
             'color': '#ffffff',
             'padding': '20px',
-            'border-radius': '20px'
+            'border-radius': '20px',
+            'margin': '10px 20px 10px 10px'
         }
     )
 

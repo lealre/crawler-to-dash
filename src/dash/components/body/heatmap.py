@@ -40,23 +40,23 @@ def get_component(df: pd.DataFrame):
         paper_bgcolor='rgba(0, 0, 0, 0)',
         font=dict(color='white'),
         margin=dict(
-            l=0,  # Left margin
-            r=0,  # Right margin
-            t=0,  # Top margin
-            b=0   # Bottom margin
+            l=0,
+            r=0,
+            t=0,
+            b=0
         ),
         yaxis=dict(
-            tickmode='array',  # Use custom tick values and labels
-            tickvals=list(range(len(pivot_df.index))),  # Set positions of ticks
-            ticktext=[f'{label}  ' for label in pivot_df.index],  # Add padding to labels
-            automargin=True   # Automatically adjust margins to fit labels
+            tickmode='array',
+            tickvals=list(range(len(pivot_df.index))),
+            ticktext=[f'{label}  ' for label in pivot_df.index],
+            automargin=True
     )
     )
 
     component = dbc.Row(
         [
-            html.H2(
-                'Price per m2 - Location x Rooms Number',
+            html.H3(
+                'Median Price per m² Based on Location and Number of Rooms',
                 style={'padding-bottom': '20px'},
             ),
             dcc.Graph(figure=heatmap),
@@ -65,7 +65,8 @@ def get_component(df: pd.DataFrame):
             'backgroundColor': '#2A3439',
             'color': '#ffffff',
             'padding': '20px',
-            'border-radius': '20px'
+            'border-radius': '20px',
+            'margin': '10px 20px 10px 10px'
         }
     )
 
