@@ -118,8 +118,10 @@ def dash_pipeline(
 
 
 if __name__ == '__main__':
+
+    from src.core.settings import settings
     consolidated_collection = 'consolidated_imovirtual'
-    dash_collection = 'dash'
+    dash_collection = settings.DASH_COLLECTION
 
     mongo = MongoConnection()
 

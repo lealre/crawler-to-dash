@@ -16,5 +16,7 @@ class Settings(BaseSettings):
 
     SAVE_TO_MONGO: bool = False
 
+    DASH_COLLECTION: str = 'dash'
+
 
 settings = Settings()

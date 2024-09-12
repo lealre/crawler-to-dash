@@ -24,7 +24,7 @@ class AbstractCrawler(ABC):
     def crawl(self):
         pass
 
-    def check_before_crawl(self):
+    def check_before_crawl(self) -> None:
         self.save_to_mongo = settings.SAVE_TO_MONGO
         self.local_storage = settings.LOCAL_STORAGE
 
@@ -48,8 +48,18 @@ class AbstractCrawler(ABC):
         except Exception as e:
             print('Error exporting the file:', str(e))
 
-    def save_data(self):
+    def save_data(self) -> None:
+        '''
+        Save the crawled data to MongoDB.
+
+        The data is saved in a collection named based on the site name.
+
+        Raises:
+            Exception: If there is an error while saving the data to MongoDB.
+        '''
+
         collection_name = f'raw_{self.site_name}'
+
         try:
             self.mongo.save_data(data=self.data, collection=collection_name)
         except Exception:

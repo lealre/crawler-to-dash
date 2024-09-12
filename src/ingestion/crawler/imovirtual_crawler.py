@@ -56,7 +56,22 @@ class ImovirtualCrawler(AbstractCrawler):
         property_types: list[str] = ['lisboa'],
         locations: list[str] = [''],
         sub_locations: list[str] = [''],
-    ):
+    ) -> None:
+        '''
+        Crawl the site to extract data based on various combinations
+        of offer types, property types, locations, and sub-locations.
+
+        Args:
+            offer_types (list[str]): List of offer types to query.
+            property_types (list[str]): List of property types to query.
+            locations (list[str]): List of locations to query.
+            sub_locations (list[str]): List of sub-locations to query.
+
+        This method generates all possible combinations of the provided
+        parameters, constructs the query URL, fetches the data
+        asynchronously, and saves the extracted ads based on the settings.
+        '''
+
         self.check_before_crawl()
 
         combinations = list(
@@ -99,6 +114,18 @@ class ImovirtualCrawler(AbstractCrawler):
             self.save_data()
 
     def get_number_of_pages(self) -> int:
+        '''
+        Retrieve the total number of pages available for the current
+        URL query combination, so it can be used as a parameter in
+        further asynchronous requests.
+
+        Returns:
+            int: The total number of pages for the current query.
+
+        Raises:
+            SystemExit: If the HTTP response status code is not 200 (OK).
+        '''
+
         response = requests.get(
             self.url, params=self.params, headers=self.headers
         )
@@ -114,9 +141,13 @@ class ImovirtualCrawler(AbstractCrawler):
         json_text = scripts[-1].text
         json_data = json.loads(json_text)
 
-        pagination = json_data['props']['pageProps']['data']['searchAds'][
-            'pagination'
-        ]
+        pagination = (
+            json_data.get('props', {})
+            .get('pageProps', {})
+            .get('data', {})
+            .get('searchAds', {})
+            .get('pagination')
+        )
 
         total_pages = int(pagination['totalPages'])
         total_results = int(pagination['totalResults'])
@@ -127,7 +158,21 @@ class ImovirtualCrawler(AbstractCrawler):
         return total_pages
 
     async def fetch_all(self, total_pages: int) -> list[Response]:
+        '''
+        Asynchronously fetch all pages for the URL query combination.
+
+        Args:
+            total_pages (int): The total number of pages to fetch.
+
+        Returns:
+            list[Response]: A list of HTTP responses for each page.
+
+        This method creates asynchronous HTTP requests for all pages
+        and returns the list of responses.
+        '''
+
         print('Starting async requests...')
+
         params_list = [
             {'limit': 72, 'page': page} for page in range(1, total_pages + 1)
         ]
@@ -147,10 +192,35 @@ class ImovirtualCrawler(AbstractCrawler):
 
     @staticmethod
     def extract_ads(responses: list[Response]) -> list[dict]:
+        '''
+        Extracts advertisements from a list of HTTP responses.
+
+        This method processes each response, parsing the HTML content to
+        find and extract advertisement data from JSON embedded in the
+        script tags. It handles both regular and promoted ads,
+        combining them into a single list.
+
+        Args:
+            responses (list[Response]):
+            A list of HTTP response objects containing the page data.
+
+        Returns:
+            list[dict]: A list of dictionaries, each representing an
+            advertisement. The list includes both regular and promoted
+            ads extracted from the responses.
+
+        Notes:
+            - This method assumes that the JSON data containing ads is
+            embedded in the last <script> tag of the HTML content.
+            - The extraction relies on the presence of specific JSON
+            structure in the page data.
+        '''
+
         print('Data extraction started..')
-        # Add logging here to capture responses with status codes other than 200 # noqa
+
         all_ads: list = []
         for response in responses:
+
             if response.status_code == HTTPStatus.OK:
                 html = response.text
                 soup = BeautifulSoup(html, 'html.parser')
@@ -158,9 +228,16 @@ class ImovirtualCrawler(AbstractCrawler):
                 scripts = soup.find_all('script')
                 json_data = json.loads(scripts[-1].text)
 
-                data = json_data['props']['pageProps']['data']
-                list_ads = data['searchAds']['items']
-                list_ads_promoted = data['searchAdsRandomPromoted']['items']
+                data = (
+                    json_data
+                    .get('props', {})
+                    .get('pageProps', {})
+                    .get('data', {})
+                )
+                list_ads = data.get('searchAds', {}).get('items', [])
+                list_ads_promoted = (
+                    data.get('searchAdsRandomPromoted', {}).get('items', [])
+                )
 
                 all_ads.extend(list_ads)
                 all_ads.extend(list_ads_promoted)
