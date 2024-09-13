@@ -11,10 +11,16 @@ class Settings(BaseSettings):
     MONGO_DATABASE: str = 'scraper_db'
     MONGO_TIMEOUT: int = 7000
 
-    LOCAL_STORAGE: bool = False
-    LOCAL_BACKUP_PATH: str
+    AWS_ACCESS_KEY_ID: str
+    AWS_SECRET_ACCESS_KEY: str
+    AWS_REGION: str
+    AWS_BUCKET_NAME: str
 
-    SAVE_TO_MONGO: bool = False
+    USE_STORAGE_LOCAL: bool = False
+    USE_STORAGE_MONGO: bool = False
+    USE_STORAGE_AWS_S3: bool = False
+
+    LOCAL_BACKUP_PATH: str
 
     DASH_COLLECTION: str = 'dash'
 

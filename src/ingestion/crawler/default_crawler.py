@@ -25,16 +25,21 @@ class AbstractCrawler(ABC):
         pass
 
     def check_before_crawl(self) -> None:
-        self.save_to_mongo = settings.SAVE_TO_MONGO
-        self.local_storage = settings.LOCAL_STORAGE
+        self.mongo_storage = settings.USE_STORAGE_MONGO
+        self.local_storage = settings.USE_STORAGE_LOCAL
+        self.aws_s3_storage = settings.USE_STORAGE_AWS_S3
 
-        if self.save_to_mongo:
+        if self.mongo_storage:
             if self.mongo.ping():
                 print('Data will be stored in mongoDB')
             else:
                 raise SystemExit('Its not possible to save data in MongoDB.')
+            
         if self.local_storage:
             print('Data will be stored locally as Json file')
+
+        if self.aws_s3_storage:
+            ...
 
     def save_local_json(self) -> None:
         day_extracted = datetime.now().strftime('%d_%m_%Y')
