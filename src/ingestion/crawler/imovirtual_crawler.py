@@ -108,10 +108,13 @@ class ImovirtualCrawler(AbstractCrawler):
         print(f'{20 * '-'}\nTotal Ads extracted: {len(self.data)}')
 
         if self.local_storage:
-            self.save_local_json()
+            self.save_json_locally()
 
-        if self.save_to_mongo:
-            self.save_data()
+        if self.mongo_storage:
+            self.save_json_to_mongodb()
+
+        if self.aws_s3_storage:
+            self.save_json_to_s3()
 
     def get_number_of_pages(self) -> int:
         '''
@@ -251,7 +254,7 @@ class ImovirtualCrawler(AbstractCrawler):
 
 
 if __name__ == '__main__':
-    offer_types_search = ['comprar', 'arrendar']
+    offer_types_search = ['arrendar', 'comprar']
     property_types_search = ['apartamento', 'moradia']
     location_search = ['lisboa']
     sub_location_search = ['']
