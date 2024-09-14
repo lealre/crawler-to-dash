@@ -1,9 +1,10 @@
 import json
 
 from src.core.mongodb import MongoConnection
+from src.core.settings import settings
 
 file_path = '_local/data.json'
-collection = 'dash'
+collection = settings.DASH_COLLECTION
 
 mongo = MongoConnection()
 
