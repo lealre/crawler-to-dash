@@ -55,5 +55,7 @@ quote-style = "single"
 [tool.taskipy.tasks]
 crawl = 'python src/ingestion/crawler/imovirtual_crawler.py'
 consolidate = 'python src/ingestion/consolidate.py'
+dash_data = 'python src/ingestion/dash_etl.py'
+crawl_to_dash = 'python src/ingestion/main.py'
 lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
