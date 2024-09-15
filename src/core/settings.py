@@ -22,7 +22,9 @@ class Settings(BaseSettings):
 
     LOCAL_BACKUP_PATH: str
 
-    DASH_COLLECTION: str = 'dash'
+    COLLECTION_RAW: str = 'raw_collection'
+    COLLECTION_CONSOLIDATE: str = 'consolidated_imovirtual'
+    COLLECTION_DASH: str = 'dash'
 
 
 settings = Settings()

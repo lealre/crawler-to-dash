@@ -1,8 +1,16 @@
 import json
 
 import boto3
+from bson import ObjectId  # Make sure you have this installed
 
 from src.core.settings import settings
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        return super(JSONEncoder, self).default(obj)
 
 
 class S3Client:
@@ -50,7 +58,7 @@ class S3Client:
             Exception: If there is an error during the file upload process.
         '''
 
-        json_data = json.dumps(data)
+        json_data = json.dumps(data, cls=JSONEncoder)
 
         try:
             self.client.put_object(

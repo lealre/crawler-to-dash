@@ -121,7 +121,7 @@ class MongoConnection:
                 self._collection.insert_many(data)
                 print(
                     'Data saved in MongoDB. '
-                    f'Added {len(data)} records to {collection}'
+                    f'Added {len(data)} records to "{collection}" collection.'
                 )
             except errors.BulkWriteError as e:
                 print('It was not possible to save data in MongoDB.')
