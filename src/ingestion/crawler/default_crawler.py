@@ -12,7 +12,7 @@ settings = Settings()
 
 class AbstractCrawler(ABC):
     def __init__(self, site_name: str):
-        '''
+        """
         Initializes an AbstractCrawler instance.
 
         Sets up the initial state for the crawler, including the data list,
@@ -22,7 +22,7 @@ class AbstractCrawler(ABC):
 
         Args:
             site_name (str): The name of the site to crawl.
-        '''
+        """
 
         self.data: list[dict] = []
         self.site_name = site_name
@@ -41,7 +41,7 @@ class AbstractCrawler(ABC):
         pass
 
     def check_before_crawl(self) -> None:
-        '''
+        """
         Checks the configuration and connectivity of storage options before
         crawling.
 
@@ -54,7 +54,7 @@ class AbstractCrawler(ABC):
         Raises:
             SystemExit: If there are issues with storage configuration
             or connectivity.
-        '''
+        """
         self.mongo_storage = settings.USE_STORAGE_MONGO
         self.local_storage = settings.USE_STORAGE_LOCAL
         self.aws_s3_storage = settings.USE_STORAGE_AWS_S3
@@ -80,9 +80,11 @@ class AbstractCrawler(ABC):
             print('Data will be stored in the AWS S3 bucket.')
             self.s3_client = S3Client()
 
-        if not any(
-            [self.mongo_storage, self.local_storage, self.aws_s3_storage]
-        ):
+        if not any([
+            self.mongo_storage,
+            self.local_storage,
+            self.aws_s3_storage,
+        ]):
             raise SystemExit(
                 'The crawled data will not be saved to any storage type'
                 '(MongoDB, AWS S3, or Local). Please configure the storage'
@@ -90,7 +92,7 @@ class AbstractCrawler(ABC):
             )
 
     def save_json_locally(self) -> None:
-        '''
+        """
         Saves the JSON data to a local file.
 
         The file is saved in the specified directory with UTF-8 encoding.
@@ -98,7 +100,7 @@ class AbstractCrawler(ABC):
 
         Raises:
             Exception: If an error occurs during the file writing process.
-        '''
+        """
 
         path_to_save = f'{self.output_path}/{self.file_name}.json'
 
@@ -113,7 +115,7 @@ class AbstractCrawler(ABC):
             print('Error exporting the file:', str(e))
 
     def save_json_to_mongodb(self) -> None:
-        '''
+        """
         Save the crawled data to MongoDB.
 
         The data is saved in a collection named with the site name
@@ -121,7 +123,7 @@ class AbstractCrawler(ABC):
 
         Raises:
             Exception: If there is an error while saving the data to MongoDB.
-        '''
+        """
 
         collection_name = f'raw_{self.site_name}'
 
@@ -131,12 +133,12 @@ class AbstractCrawler(ABC):
             raise ('It was not possible to save the data in MongoDB')
 
     def save_json_to_s3(self):
-        '''
+        """
         Uploads the crawled data to the AWS S3 bucket specified in the .env
         file as a JSON file.
 
         Raises:
             Exception: Any exceptions related to connection issues with AWS S3.
-        '''
+        """
 
         self.s3_client.upload_file(data=self.data, file_name=self.file_name)

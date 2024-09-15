@@ -7,7 +7,6 @@ from src.dash.components.app import df
 
 
 def get_component():
-
     pivot_df = df.pivot_table(
         index='location',
         columns='roomsNumberNotation',
@@ -41,18 +40,13 @@ def get_component():
         yaxis_title=None,
         paper_bgcolor='rgba(0, 0, 0, 0)',
         font=dict(color='white'),
-        margin=dict(
-            l=0,
-            r=0,
-            t=0,
-            b=0
-        ),
+        margin=dict(l=0, r=0, t=0, b=0),
         yaxis=dict(
             tickmode='array',
             tickvals=list(range(len(pivot_df.index))),
             ticktext=[f'{label}  ' for label in pivot_df.index],
-            automargin=True
-    )
+            automargin=True,
+        ),
     )
 
     component = dbc.Row(
@@ -68,8 +62,8 @@ def get_component():
             'color': '#ffffff',
             'padding': '20px',
             'border-radius': '20px',
-            'margin': '10px 20px 10px 10px'
-        }
+            'margin': '10px 20px 10px 10px',
+        },
     )
 
     return component

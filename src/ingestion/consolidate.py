@@ -7,7 +7,7 @@ class Consolidate:
         raw_collection='raw_imovirtual',
         consolidated_collection='consolidated_imovirtual',
     ) -> None:
-        '''
+        """
         Initializes the Consolidate class with MongoDB connections and loads
         data from the raw and consolidated collections.
 
@@ -19,7 +19,7 @@ class Consolidate:
         consolidated_collection : str, optional
             The name of the MongoDB collection containing consolidated data
             (default is 'consolidated_imovirtual').
-        '''
+        """
 
         self.mongo = MongoConnection()
         self.raw_collection = raw_collection
@@ -36,11 +36,11 @@ class Consolidate:
         )
 
     def consolidate(self) -> None:
-        '''
+        """
         Main method to consolidate data by filtering unique ads, updating
         their availability, and inserting new ads into the consolidated
         collection.
-        '''
+        """
 
         self.filtered_data: list[dict] = (
             self.filter_unique_and_add_availability(self.raw_data)
@@ -50,11 +50,11 @@ class Consolidate:
         self.insert_new_ads()
 
     def update_availability(self) -> None:
-        '''
+        """
         Updates the availability status of ads in the consolidated collection.
         Compares the consolidated data with the filtered raw data to determine
         which ads' availability needs to be updated.
-        '''
+        """
 
         ids_to_update = self.ads_to_update_availability(
             consolidated_data=self.consolidated_data,
@@ -68,11 +68,11 @@ class Consolidate:
         )
 
     def insert_new_ads(self) -> None:
-        '''
+        """
         Inserts new ads that are not present in the consolidated collection.
         Compares the consolidated data with filtered data and saves
         new entries into the collection.
-        '''
+        """
 
         new_ads = self.new_ads_to_insert(
             consolidated_data=self.consolidated_data,
@@ -87,7 +87,7 @@ class Consolidate:
     def ads_to_update_availability(
         consolidated_data: list[dict], filtered_data: list[dict]
     ) -> list[str]:
-        '''
+        """
         Identifies ads that need their availability status updated.
 
         Parameters:
@@ -101,7 +101,7 @@ class Consolidate:
         -------
         list[str]
             A list of ad IDs whose availability status needs to be updated.
-        '''
+        """
 
         filtered_ids = [item.get('id') for item in filtered_data]
 
@@ -120,7 +120,7 @@ class Consolidate:
     def new_ads_to_insert(
         consolidated_data: list[dict], filtered_data: list[dict]
     ) -> list[dict]:
-        '''
+        """
         Identifies new ads that need to be inserted into the consolidated
         collection.
 
@@ -135,7 +135,7 @@ class Consolidate:
         -------
         list[dict]
             A list of new ads to be inserted into the consolidated collection.
-        '''
+        """
         consolidated_ids = [item.get('id') for item in consolidated_data]
 
         ads_to_insert: list = [
@@ -148,7 +148,7 @@ class Consolidate:
 
     @staticmethod
     def filter_unique_and_add_availability(data: list[dict]) -> list[dict]:
-        '''
+        """
         Filters out duplicate ads based on their 'id' and adds an
         'is_available' key to each ad, marking it as available.
 
@@ -162,7 +162,7 @@ class Consolidate:
         list[dict]
             A filtered list containing only unique ads with the
             'is_available' flag set to True.
-        '''
+        """
         seen = set()
         data_filtered: list = []
         for item in data:

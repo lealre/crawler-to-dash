@@ -1,5 +1,4 @@
 import dash_bootstrap_components as dbc
-import pandas as pd
 import plotly.express as px
 from dash import Input, Output, dcc, html
 
@@ -7,7 +6,6 @@ from src.dash.components.app import app, df
 
 
 def get_component():
-
     dropdown_options = list(df['estate'].unique())
 
     component = dbc.Row(
@@ -30,18 +28,18 @@ def get_component():
                             },
                         ),
                     ],
-                    md=3
+                    md=3,
                 ),
                 dcc.Graph(id='treemap-figure'),
-            ])
+            ]),
         ],
         style={
             'backgroundColor': '#2A3439',
             'color': '#ffffff',
             'padding': '20px',
             'border-radius': '20px',
-            'margin': '10px 20px 10px 10px'
-        }
+            'margin': '10px 20px 10px 10px',
+        },
     )
 
     return component
@@ -52,14 +50,15 @@ def get_component():
     Input('estate-type-treemap', 'value'),
 )
 def treemap_plot(estate_type):
-
     df_filtered = df.copy()
 
     if estate_type:
         df_filtered = df_filtered[df_filtered['estate'] == estate_type]
 
     proportion = (
-        df_filtered.value_counts(['roomsNumberNotation', 'location'], normalize=True)
+        df_filtered.value_counts(
+            ['roomsNumberNotation', 'location'], normalize=True
+        )
         .to_frame()
         .reset_index()
     )

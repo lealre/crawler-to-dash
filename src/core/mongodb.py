@@ -7,12 +7,12 @@ class MongoConnection:
     _instance = None
 
     def __new__(cls, *args, **kwargs):
-        '''
+        """
         Creates or returns the singleton instance of MongoConnection.
 
         Ensures that only one instance of MongoConnection exists throughout
         the application.
-        '''
+        """
 
         if not cls._instance:
             cls._instance = super().__new__(cls)
@@ -22,12 +22,12 @@ class MongoConnection:
         return cls._instance
 
     def __init__(self):
-        '''
+        """
         Initializes the MongoConnection instance.
 
         Connects to the MongoDB server using configuration settings.
         This method will be called only once due to the singleton pattern.
-        '''
+        """
 
         if self._client is None:
             self.host = settings.MONGO_HOST
@@ -36,12 +36,12 @@ class MongoConnection:
             self._connect()
 
     def _connect(self) -> None:
-        '''
+        """
         Establishes a connection to the MongoDB server.
 
         Initializes the MongoClient and selects the database as specified
         in the configuration settings.
-        '''
+        """
         self._client = MongoClient(
             self.host,
             self.port,
@@ -50,12 +50,12 @@ class MongoConnection:
         self._db = self._client[self.database_name]
 
     def ping(self) -> bool:
-        '''
+        """
         Pings the MongoDB server to check if the connection is alive.
 
         Returns:
             bool: True if the connection is successful, False otherwise.
-        '''
+        """
 
         try:
             self._client.admin.command('ping')
@@ -68,14 +68,14 @@ class MongoConnection:
             return False
 
     def set_collection(self, collection: str, unique_index: str = '') -> None:
-        '''
+        """
         Sets the collection to interact with and optionally creates
         a unique index.
 
         Args:
             collection (str): The name of the collection to use.
             unique_index (str): The field to be indexed uniquely (if any).
-        '''
+        """
 
         self._collection = self._db[collection]
 
@@ -101,7 +101,7 @@ class MongoConnection:
     def save_data(
         self, collection: str, data: list[dict], unique_index: str = ''
     ) -> None:
-        '''
+        """
         Saves a list of documents to the specified collection.
 
         Args:
@@ -112,7 +112,7 @@ class MongoConnection:
 
         Raises:
             SystemExit: If an error occurs during data insertion.
-        '''
+        """
 
         self.set_collection(collection=collection, unique_index=unique_index)
 
@@ -137,7 +137,7 @@ class MongoConnection:
         filter: dict | None = None,
         fields: list | None = None,
     ) -> list[dict]:
-        '''
+        """
         Retrieves data from the specified collection.
 
         Args:
@@ -148,7 +148,7 @@ class MongoConnection:
 
         Returns:
             list[dict]: A list of documents retrieved from the collection.
-        '''
+        """
 
         self.set_collection(collection=collection)
 
@@ -157,15 +157,13 @@ class MongoConnection:
         if not projection:
             projection = {'_id': 0}
 
-        documents = self._collection.find(
-            filter=filter, projection=projection
-        )
+        documents = self._collection.find(filter=filter, projection=projection)
         return list(documents)
 
     def update_is_available(
         self, collection: str, unique_index: str, ids: list[int]
     ) -> None:
-        '''
+        """
         Updates the 'is_available' field to False for the given list of ids.
 
         This method is used to update the availability status of ads in the
@@ -175,7 +173,7 @@ class MongoConnection:
             collection (str): The name of the collection to update.
             unique_index (str): The unique index field to use.
             ids (list[int]): The list of ids to be updated.
-        '''
+        """
 
         self.set_collection(collection=collection, unique_index=unique_index)
         try:
@@ -189,12 +187,12 @@ class MongoConnection:
             print(f'An error occurred: {e}')
 
     def close_connection(self) -> None:
-        '''
+        """
         Closes the connection to the MongoDB server.
 
         Ensures that the connection is properly closed and
         resources are released.
-        '''
+        """
 
         if self._client:
             self._client.close()

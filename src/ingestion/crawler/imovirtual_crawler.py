@@ -57,7 +57,7 @@ class ImovirtualCrawler(AbstractCrawler):
         locations: list[str] = [''],
         sub_locations: list[str] = [''],
     ) -> None:
-        '''
+        """
         Crawl the site to extract data based on various combinations
         of offer types, property types, locations, and sub-locations.
 
@@ -70,7 +70,7 @@ class ImovirtualCrawler(AbstractCrawler):
         This method generates all possible combinations of the provided
         parameters, constructs the query URL, fetches the data
         asynchronously, and saves the extracted ads based on the settings.
-        '''
+        """
 
         self.check_before_crawl()
 
@@ -117,7 +117,7 @@ class ImovirtualCrawler(AbstractCrawler):
             self.save_json_to_s3()
 
     def get_number_of_pages(self) -> int:
-        '''
+        """
         Retrieve the total number of pages available for the current
         URL query combination, so it can be used as a parameter in
         further asynchronous requests.
@@ -127,7 +127,7 @@ class ImovirtualCrawler(AbstractCrawler):
 
         Raises:
             SystemExit: If the HTTP response status code is not 200 (OK).
-        '''
+        """
 
         response = requests.get(
             self.url, params=self.params, headers=self.headers
@@ -161,7 +161,7 @@ class ImovirtualCrawler(AbstractCrawler):
         return total_pages
 
     async def fetch_all(self, total_pages: int) -> list[Response]:
-        '''
+        """
         Asynchronously fetch all pages for the URL query combination.
 
         Args:
@@ -172,7 +172,7 @@ class ImovirtualCrawler(AbstractCrawler):
 
         This method creates asynchronous HTTP requests for all pages
         and returns the list of responses.
-        '''
+        """
 
         print('Starting async requests...')
 
@@ -195,7 +195,7 @@ class ImovirtualCrawler(AbstractCrawler):
 
     @staticmethod
     def extract_ads(responses: list[Response]) -> list[dict]:
-        '''
+        """
         Extracts advertisements from a list of HTTP responses.
 
         This method processes each response, parsing the HTML content to
@@ -217,13 +217,12 @@ class ImovirtualCrawler(AbstractCrawler):
             embedded in the last <script> tag of the HTML content.
             - The extraction relies on the presence of specific JSON
             structure in the page data.
-        '''
+        """
 
         print('Data extraction started..')
 
         all_ads: list = []
         for response in responses:
-
             if response.status_code == HTTPStatus.OK:
                 html = response.text
                 soup = BeautifulSoup(html, 'html.parser')
@@ -232,15 +231,14 @@ class ImovirtualCrawler(AbstractCrawler):
                 json_data = json.loads(scripts[-1].text)
 
                 data = (
-                    json_data
-                    .get('props', {})
+                    json_data.get('props', {})
                     .get('pageProps', {})
                     .get('data', {})
                 )
                 list_ads = data.get('searchAds', {}).get('items', [])
-                list_ads_promoted = (
-                    data.get('searchAdsRandomPromoted', {}).get('items', [])
-                )
+                list_ads_promoted = data.get(
+                    'searchAdsRandomPromoted', {}
+                ).get('items', [])
 
                 all_ads.extend(list_ads)
                 all_ads.extend(list_ads_promoted)

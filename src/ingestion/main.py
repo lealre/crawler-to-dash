@@ -1,9 +1,9 @@
-'''
+"""
 From crawling the data, consolidating it, and transforming it for use in the
 Dashboard, all within MongoDB.
 
 Crawl Data -> Consolidate Data -> Create Dashboard Collection
-'''
+"""
 
 from src.core.mongodb import MongoConnection
 from src.core.settings import settings

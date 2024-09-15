@@ -12,11 +12,11 @@ app.layout = dbc.Container(
     fluid=True,
     style={
         'width': '100%',
-        'padding': "15px 25px 25px 25px",
+        'padding': '15px 25px 25px 25px',
         'background-color': '#191c24',
     },
 )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run_server(debug=True, port=8051)

@@ -1,7 +1,7 @@
-'''
+"""
 Script to populate the dashboard collection in MongoDB using JSON data
 from the data folder.
-'''
+"""
 
 import json
 

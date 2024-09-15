@@ -5,10 +5,9 @@ from src.dash.components.body import heatmap as HeatmapComponent
 from src.dash.components.body import scatter as ScatterComponent
 from src.dash.components.body import table as TableComponent
 from src.dash.components.body import treemap as TreemapComponent
-from src.dash.components.app import df
 
 
-class Body():
+class Body:
     def __init__(self) -> None:
         self.scatter_component = ScatterComponent.get_component()
         self.treemap_component = TreemapComponent.get_component()
@@ -19,11 +18,9 @@ class Body():
     def get_component(self):
         component = dbc.Row([
             dbc.Col(
-                [
-                    self.table_component
-                ],
+                [self.table_component],
                 style={'margin': '10px 0px 0px 0px'},
-                md=3
+                md=3,
             ),
             dbc.Col(
                 [
@@ -33,8 +30,8 @@ class Body():
                     html.Br(),
                     self.heatmap_component,
                 ],
-                md=9
-            )
+                md=9,
+            ),
         ])
 
         return component

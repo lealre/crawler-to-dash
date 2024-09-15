@@ -1,5 +1,4 @@
 import dash_bootstrap_components as dbc
-import pandas as pd
 import plotly.express as px
 from dash import Input, Output, dcc, html
 
@@ -15,19 +14,18 @@ AREA_MARKS_LABELS = {
     7: '1000',
     8: '10K',
     9: '100K',
-    10: 'Max'
+    10: 'Max',
 }
 
 
 def get_component():
-
     dropdown_options = list(df['estate'].unique())
 
     component = dbc.Row(
         [
             html.H3(
                 'Price vs. Area with Price per Square Meter by Room Count',
-                style={'padding-bottom': '10px'}
+                style={'padding-bottom': '10px'},
             ),
             dbc.Row([
                 dbc.Col(
@@ -43,7 +41,7 @@ def get_component():
                             },
                         ),
                     ],
-                    md=3
+                    md=3,
                 ),
                 dbc.Col(
                     [
@@ -57,12 +55,14 @@ def get_component():
                             id='log-axis',
                         )
                     ],
-                    md=3
+                    md=3,
                 ),
                 dcc.Graph(id='scatter-figure'),
                 html.Div([
                     html.P('Area Slider'),
-                    dcc.RangeSlider(1, 10,
+                    dcc.RangeSlider(
+                        1,
+                        10,
                         marks=AREA_MARKS_LABELS,
                         value=[1, 10],
                         dots=False,
@@ -71,16 +71,16 @@ def get_component():
                         updatemode='drag',
                         id='area-mark',
                     ),
-                ])
-            ])
+                ]),
+            ]),
         ],
         style={
             'backgroundColor': '#2A3439',
             'color': '#ffffff',
             'padding': '20px',
             'border-radius': '20px',
-            'margin': '10px 20px 10px 10px'
-        }
+            'margin': '10px 20px 10px 10px',
+        },
     )
 
     return component
@@ -90,13 +90,12 @@ def get_component():
     Output('scatter-figure', 'figure'),
     Input('estate-type-scatter', 'value'),
     Input('log-axis', 'value'),
-    Input('area-mark', 'value')
+    Input('area-mark', 'value'),
 )
 def scatter_plot(estate_type, log_axis, area_mark):
-
     df_filtered = df.copy()
 
-    ''' Area range filter'''
+    """ Area range filter"""
     map_marks = {
         1: df_filtered.areaInSquareMeters.min(),
         2: 30,
@@ -107,7 +106,7 @@ def scatter_plot(estate_type, log_axis, area_mark):
         7: 1000,
         8: 10_000,
         9: 100_000,
-        10: df_filtered.areaInSquareMeters.max()
+        10: df_filtered.areaInSquareMeters.max(),
     }
 
     min_range_selected = area_mark[0]
@@ -117,15 +116,15 @@ def scatter_plot(estate_type, log_axis, area_mark):
     max_area = map_marks[max_range_selected]
 
     df_filtered = df[
-        (df.areaInSquareMeters >= min_area) &
-        (df.areaInSquareMeters <= max_area)
+        (df.areaInSquareMeters >= min_area)
+        & (df.areaInSquareMeters <= max_area)
     ]
 
-    ''' Type of property filter (estate)'''
+    """ Type of property filter (estate)"""
     if estate_type:
         df_filtered = df_filtered[df_filtered['estate'] == estate_type]
 
-    '''Figure plot'''
+    """Figure plot"""
     color_scale = px.colors.sequential.Viridis
     color_map = {f'T{i}': color_scale[i] for i in range(10)}
     color_map['T9+'] = color_scale[-1]
@@ -139,7 +138,7 @@ def scatter_plot(estate_type, log_axis, area_mark):
         color_discrete_map=color_map,
     )
 
-    '''Log axis filter'''
+    """Log axis filter"""
     fig.update_xaxes(type='log' if 'log_x' in log_axis else 'linear')
     fig.update_yaxes(type='log' if 'log_y' in log_axis else 'linear')
 
