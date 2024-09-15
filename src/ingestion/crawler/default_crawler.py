@@ -119,7 +119,6 @@ class AbstractCrawler(ABC):
         The data is saved in a collection named with the site name
         and a 'raw_' prefix.
 
-
         Raises:
             Exception: If there is an error while saving the data to MongoDB.
         '''

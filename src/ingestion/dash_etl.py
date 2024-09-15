@@ -35,6 +35,28 @@ VALUES_TO_MAP = {
 def extract_data(
     mongo_conn: MongoConnection, collection_name: str
 ) -> list[dict]:
+    '''
+    Extracts data from a MongoDB collection.
+
+    Parameters:
+    ----------
+    mongo_conn : MongoConnection
+        An active MongoDB connection.
+    collection_name : str
+        The name of the MongoDB collection to extract data from.
+
+    Returns:
+    -------
+    list[dict]
+        A list of documents (as dictionaries) retrieved from the specified
+        collection.
+
+    Raises:
+    -------
+    SystemExit
+        If the MongoDB connection cannot be established.
+    '''
+
     if not mongo_conn.ping():
         raise SystemExit()
 
@@ -46,6 +68,22 @@ def extract_data(
 
 
 def filter_data(data: list[dict]) -> list[dict]:
+    '''
+    Filters and restructures the data by extracting relevant fields such as
+    location, price per square meter, and total price. Adds the city
+    information to the documents.
+
+    Parameters:
+    ----------
+    data : list[dict]
+        A list of documents (as dictionaries) to be filtered.
+
+    Returns:
+    -------
+    list[dict]
+        A list of filtered and updated documents.
+    '''
+
     for item in data:
         location = (
             item.get('location', {})
@@ -77,6 +115,22 @@ def filter_data(data: list[dict]) -> list[dict]:
 
 
 def transform_data(data: list[dict]) -> list[dict]:
+    '''
+    Transforms the filtered data by cleaning, mapping values, and
+    restructuring location information to a consistent format.
+    Filters the data to only include entries from Lisbon.
+
+    Parameters:
+    ----------
+    data : list[dict]
+        A list of filtered documents (as dictionaries) to be transformed.
+
+    Returns:
+    -------
+    list[dict]
+        A list of transformed documents ready for loading into MongoDB.
+    '''
+
     df = pd.DataFrame(data)
 
     df.dropna(inplace=True)
@@ -98,6 +152,19 @@ def transform_data(data: list[dict]) -> list[dict]:
 def load_data(
     mongo_conn: MongoConnection, data: list[dict], collection_name: str
 ) -> None:
+    '''
+    Loads the transformed data into a specified MongoDB collection.
+
+    Parameters:
+    ----------
+    mongo_conn : MongoConnection
+        An active MongoDB connection.
+    data : list[dict]
+        A list of documents (as dictionaries) to be loaded.
+    collection_name : str
+        The name of the MongoDB collection to load data into.
+    '''
+
     mongo_conn.save_data(
         collection=collection_name, data=data, unique_index=UNIQUE_INDEX
     )
@@ -106,6 +173,20 @@ def load_data(
 def dash_pipeline(
     mongo_conn: MongoConnection, extract_from: str, load_to: str
 ) -> None:
+    '''
+    Orchestrates the end-to-end pipeline of extracting, filtering,
+    transforming, and loading data into MongoDB for a dashboard.
+
+    Parameters:
+    ----------
+    mongo_conn : MongoConnection
+        An active MongoDB connection.
+    extract_from : str
+        The name of the MongoDB collection to extract data from.
+    load_to : str
+        The name of the MongoDB collection to load transformed data into.
+    '''
+
     data = extract_data(mongo_conn=mongo_conn, collection_name=extract_from)
 
     filtered_data = filter_data(data=data)
@@ -120,8 +201,8 @@ def dash_pipeline(
 if __name__ == '__main__':
 
     from src.core.settings import settings
-    consolidated_collection = 'consolidated_imovirtual'
-    dash_collection = settings.DASH_COLLECTION
+    consolidated_collection = settings.COLLECTION_CONSOLIDATE
+    dash_collection = settings.COLLECTION_DASH
 
     mongo = MongoConnection()
 
