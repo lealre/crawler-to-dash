@@ -1,7 +1,7 @@
 import json
 
 import boto3
-from bson import ObjectId  # Make sure you have this installed
+from bson import ObjectId
 
 from src.core.settings import settings
 

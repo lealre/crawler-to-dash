@@ -6,8 +6,9 @@ from the data folder.
 import json
 
 from src.core.mongodb import MongoConnection
+from src.core.settings import settings
 
-collection_name = 'teste'
+collection_name = settings.COLLECTION_DASH
 json_path = 'scripts/data/data.json'
 
 mongo = MongoConnection()
