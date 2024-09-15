@@ -3,11 +3,10 @@ import pandas as pd
 import plotly.express as px
 from dash import Input, Output, dcc, html
 
-from src.dash.components.app import app
-from src.dash.data import Data
+from src.dash.components.app import app, df
 
 
-def get_component(df: pd.DataFrame):
+def get_component():
 
     dropdown_options = list(df['estate'].unique())
 
@@ -54,13 +53,13 @@ def get_component(df: pd.DataFrame):
 )
 def treemap_plot(estate_type):
 
-    df = Data().get_data()
+    df_filtered = df.copy()
 
     if estate_type:
-        df = df[df['estate'] == estate_type]
+        df_filtered = df_filtered[df_filtered['estate'] == estate_type]
 
     proportion = (
-        df.value_counts(['roomsNumberNotation', 'location'], normalize=True)
+        df_filtered.value_counts(['roomsNumberNotation', 'location'], normalize=True)
         .to_frame()
         .reset_index()
     )
@@ -88,7 +87,6 @@ def treemap_plot(estate_type):
     fig.update_layout(
         margin=dict(l=0, r=0, t=20, b=0),
         paper_bgcolor='rgba(0, 0, 0, 0)',
-        # template='plotly_dark'
     )
 
     return fig

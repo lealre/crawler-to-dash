@@ -3,8 +3,7 @@ import pandas as pd
 import plotly.express as px
 from dash import Input, Output, dcc, html
 
-from src.dash.components.app import app
-from src.dash.data import Data
+from src.dash.components.app import app, df
 
 AREA_MARKS_LABELS = {
     1: 'Min',
@@ -20,7 +19,7 @@ AREA_MARKS_LABELS = {
 }
 
 
-def get_component(df: pd.DataFrame):
+def get_component():
 
     dropdown_options = list(df['estate'].unique())
 
@@ -95,11 +94,11 @@ def get_component(df: pd.DataFrame):
 )
 def scatter_plot(estate_type, log_axis, area_mark):
 
-    df = Data().get_data()
+    df_filtered = df.copy()
 
     ''' Area range filter'''
     map_marks = {
-        1: df.areaInSquareMeters.min(),
+        1: df_filtered.areaInSquareMeters.min(),
         2: 30,
         3: 50,
         4: 100,
@@ -108,7 +107,7 @@ def scatter_plot(estate_type, log_axis, area_mark):
         7: 1000,
         8: 10_000,
         9: 100_000,
-        10: df.areaInSquareMeters.max()
+        10: df_filtered.areaInSquareMeters.max()
     }
 
     min_range_selected = area_mark[0]
@@ -126,11 +125,11 @@ def scatter_plot(estate_type, log_axis, area_mark):
     if estate_type:
         df_filtered = df_filtered[df_filtered['estate'] == estate_type]
 
+    '''Figure plot'''
     color_scale = px.colors.sequential.Viridis
     color_map = {f'T{i}': color_scale[i] for i in range(10)}
     color_map['T9+'] = color_scale[-1]
 
-    '''Figure plot'''
     fig = px.scatter(
         df_filtered,
         y='totalPrice',

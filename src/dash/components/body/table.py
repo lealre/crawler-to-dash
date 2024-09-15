@@ -1,8 +1,9 @@
 import pandas as pd
 from dash import dash_table
 
+from src.dash.components.app import df
 
-def get_component(df: pd.DataFrame):
+def get_component():
     df_agg = df.groupby('location').agg({
         'areaInSquareMeters': ['mean', 'median'],
     }).round(0)

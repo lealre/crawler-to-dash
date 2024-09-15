@@ -3,8 +3,10 @@ import pandas as pd
 import plotly.graph_objects as go
 from dash import dcc, html
 
+from src.dash.components.app import df
 
-def get_component(df: pd.DataFrame):
+
+def get_component():
 
     pivot_df = df.pivot_table(
         index='location',
