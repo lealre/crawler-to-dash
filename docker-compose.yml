@@ -10,6 +10,7 @@ services:
       - dash-network
   
   dash-app:
+    entrypoint: ./entrypoint.sh
     build:
       context: .
       dockerfile: Dockerfile
