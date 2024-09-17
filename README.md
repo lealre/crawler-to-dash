@@ -14,8 +14,8 @@ It's possible to run the dashboard using Docker Compose.
   - [Data Ingestion](#data-ingestion)
   - [Dashboard](#dashboard)
 - [How to run this project](#how-to-run-this-project)
-  - [Data Ingestion](#data-ingestion)
   - [Dash with Docker](#dash-with-docker)
+  - [Local Setup](#local-setup)
   - [MongoDB local backup](#mongodb-local-backup)
 - [Further Improvements](#further-improvements)
 
@@ -54,25 +54,110 @@ To build the graphs and manipulate the data, it uses [Plotly](https://plotly.com
 
 ## How to run this project
 
-All the steps here were intended to a `bash` terminal.
+This section explains how to run the project.
 
-This section shows how to run the project.  
+All the steps here are intended for a `bash` terminal.
 
-Regardless of the method, start with the following steps:
+The project setup uses [`pyenv`](https://github.com/pyenv/pyenv) and [`poetry`](https://python-poetry.org/).
+
+As mentioned before, this project operates in two blocks, and it is possible to run both of them independently. Using Docker Compose, you can run the dashboard locally connected to the database. The Docker Compose setup includes an entrypoint that populates the database with the JSON file located at [scripts/data/data.json](scripts/data/data.json) if the collection does not already exist in MongoDB.
 
 1 - Clone the repo locally:
 ```bash
-git clone https://github.com/lealre/madr-fastapi.git
+git https://github.com/lealre/crawler-to-dash.git
 ```
 
 2 - Access the project directory:
 ```bash
-cd madr-fastapi
+cd crawler-to-dash
 ```
 
-### Data Ingestion
+To run this properly, it's necessary to create the `.env` variable file in the root of the project. An example can be found in [.env-example](.env-example). The default configuration to connect with MongoDB is:
+```
+MONGO_HOST='mongodb'
+MONGO_PORT=27017
+MONGO_DATABASE='db'
+```
 
 ### Dash with Docker
+
+- [Docker](https://www.docker.com/)
+- [Install Docker Compose](https://docs.docker.com/compose/install/)
+
+After completing steps 1 and 2, and with the `.env` variable file configured:
+
+Build the image:
+```bash
+docker compose buid
+```
+
+Build the container:
+```bash
+dokcer compose up
+```
+
+Access the local host:
+```
+http://localhost:8051/
+```
+
+**NOTE:** It may be necessary to make the script `./entrypoint.sh` executable before building the container:
+```bash
+chmod +x entrypoint.sh
+```
+
+### Local Setup
+
+After completing steps 1 and 2, and with the `.env` variable file configured:
+
+3 - Set the Python version with `pyenv`:
+```bash
+pyenv local 3.12.2
+```
+
+4 - Create the virtual environment:
+```bash
+poetry env use 3.12.2
+```
+
+5 - Activate the virtual environment:
+```bash
+poetry shell
+```
+
+6 - Install dependencies:
+```bash
+poetry install
+```
+
+7 - Run the data pipeline, from crawling to dashboard data:
+```bash
+task crawl_to_dash
+```
+
+It is also possible to run each step separately:
+
+To run just the crawler:
+```bash
+task crawl
+```
+
+Based on the `.env` variables, it will store the data in different possible sources.
+```
+USE_STORAGE_LOCAL=False
+USE_STORAGE_MONGO=False
+USE_STORAGE_AWS_S3=False
+```
+
+To run just the data consolidation:
+```bash
+task consolidate
+```
+
+To generate the dash data:
+```bash
+task dash_data
+```
 
 ### MongoDB local Backup
 
