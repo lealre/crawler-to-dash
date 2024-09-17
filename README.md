@@ -6,6 +6,8 @@ Both the dashboard and the scripts to crawl the data were implemented using Pyth
 
 By setting the environmental variables, the script can store the scraped raw data in three different sources: MongoDB using [pymongo](https://pymongo.readthedocs.io/en/stable/#), an AWS S3 bucket as a JSON file (using [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)), and local storage as a JSON file.
 
+Below is a quick demonstration of the dashboard.
+
 <img src="media/demo.gif" style="width: 100%;">
 
 It's possible to run the dashboard using Docker Compose.
@@ -53,6 +55,8 @@ All the data used in the dashboard is loaded directly from the MongoDB collectio
 
 To build the graphs and manipulate the data, it uses [Plotly](https://plotly.com/python/) and [Pandas](https://pandas.pydata.org/docs/index.html).
 
+<img src="media/dash1.png" style="width: 100%;">
+<img src="media/dash2.png" style="width: 100%;">
 
 ## How to run this project
 
