@@ -6,6 +6,8 @@ Both the dashboard and the scripts to crawl the data were implemented using Pyth
 
 By setting the environmental variables, the script can store the scraped raw data in three different sources: MongoDB using [pymongo](https://pymongo.readthedocs.io/en/stable/#), an AWS S3 bucket as a JSON file (using [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)), and local storage as a JSON file.
 
+<img src="media/demo.gif" style="width: 100%;">
+
 It's possible to run the dashboard using Docker Compose.
 
 ## Table of Contents
@@ -26,7 +28,7 @@ The project is divided into two blocks that can work separately, each inside the
 - **Data Ingestion**: Responsible for crawling the data, consolidating it in the database while avoiding duplicates, and preparing the data for use in the dashboard.
 - **Dashboard**: Uses the cleaned and filtered data from the database.
 
-<img src="media/diag.png" style="width: 100%;" alt="Description of the image">
+<img src="media/diag.png" style="width: 100%;">
 
 
 ### Data Ingestion
@@ -183,3 +185,5 @@ LOCAL_BACKUP_PATH="/local/path/to/export"
 ```
 
 ## Further Improvements
+
+- Improve the Dashboars style like font size, colors and callbacks intaration;
