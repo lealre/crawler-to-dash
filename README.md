@@ -186,4 +186,4 @@ LOCAL_BACKUP_PATH="/local/path/to/export"
 
 ## Further Improvements
 
-- Improve the Dashboars style like font size, colors and callbacks intaration;
+- Improve the dashboard's style, including font size, colors, and callback interactions.
