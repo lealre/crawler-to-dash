@@ -1,4 +1,4 @@
-from dash import dash_table
+from dash import dash_table, html
 
 from src.dash.components.app import df
 
@@ -7,14 +7,17 @@ def get_component():
     df_agg = (
         df.groupby('location')
         .agg({
-            'areaInSquareMeters': ['mean', 'median'],
+            'totalPrice': ['mean', 'median'],
         })
         .round(0)
     )
 
     df_agg.columns = df_agg.columns.droplevel(0)
-
+    
     df_agg = df_agg.reset_index()
+
+    df_agg.columns = ['Location', 'Mean (€)', 'Median (€)']
+
 
     component = dash_table.DataTable(
         data=df_agg.to_dict('records'),
@@ -38,24 +41,9 @@ def get_component():
             'borderRadius': '8px',
             'overflow': 'hidden',
             'border': '2px solid #222729',
+            'overflowX': 'auto',
+            'maxWidth': '100%', 
         },
     )
 
     return component
-
-
-# @app.callback(
-#     Input(...),
-#     Output('table-mask', 'data')
-# )
-# def table():
-
-#     df = Data().get_data()
-
-#     df_agg = df.groupby('location').agg({
-#         'areaInSquareMeters': ['mean', 'median'],
-#     }).round(0)
-
-#     df_agg.columns = df_agg.columns.droplevel(0)
-
-#     df_agg = df_agg.reset_index()

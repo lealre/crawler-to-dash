@@ -59,7 +59,7 @@ def get_component():
                 ),
                 dcc.Graph(id='scatter-figure'),
                 html.Div([
-                    html.P('Area Slider'),
+                    html.P('Select Area Range'),
                     dcc.RangeSlider(
                         1,
                         10,

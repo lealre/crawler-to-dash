@@ -18,7 +18,13 @@ class Body:
     def get_component(self):
         component = dbc.Row([
             dbc.Col(
-                [self.table_component],
+                [
+                    html.H5(
+                        'Price per Municipality',
+                        style={'padding-bottom': '10px'},
+                    ),
+                    self.table_component
+                ],
                 style={'margin': '10px 0px 0px 0px'},
                 md=3,
             ),
